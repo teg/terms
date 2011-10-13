@@ -1,0 +1,187 @@
+\documentclass[11pt,a4paper]{article}
+
+% A more pleasant font
+\usepackage[T1]{fontenc} % use postscript type 1 fonts
+\usepackage{textcomp} % use symbols in TS1 encoding
+\usepackage{mathptmx,helvet,courier} % use nice, standard fonts for roman, sans and monospace respectively
+
+% Improves the text layout
+\usepackage{microtype}
+
+% To typeset derivations
+\usepackage[lutzsyntax,noxy]{virginialake}
+
+% To get semantic brackets
+\usepackage{stmaryrd}
+
+% To use definitions, lemmas and theorems.
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{plain}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{theorem}[definition]{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{Remark}
+
+% Might not be needed, didn't check.
+\usepackage{amsfonts}
+
+\title{Atomic Flows for a Simply Typed Term Calculus}
+\author{Tom Gundersen and Michel Parigot}
+
+\begin{document}
+
+\maketitle
+
+\section{Derivations}
+
+Translate derivations from the standard system in natural deduction in seqeunt style with explicit structural rules, into open deduction. Add rules that make contraction and weakening atomic.
+
+\subsection{Formulae}
+
+\begin{definition}
+A  formula is defined to be
+\begin{itemize}
+\item the unit true: $\top$;
+\item an atom: $a$;
+\item a conjunction: $\vls(A.B)$; or
+\item an implication: $A\rightarrow B$,
+\end{itemize}
+where no conjunction or unit may occur to the left of an implication.
+\end{definition}
+
+We consider formulae modulo associativity and commutativity of conjunction, and we take $\top$ to be the unit for conjunction.
+
+\subsubsection{Projections of Formulae}
+
+\begin{definition}
+The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
+\begin{itemize}
+\item $\pi_1(\top)=\pi_2(\top)=\top$;
+\item $\pi_1(a)=\pi_2(a)=a$;
+\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
+\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
+\end{itemize}
+\end{definition}
+
+Note: we need to possibly reconsider the equations on conjunction\ldots.
+
+\subsection{Inference Rules}
+
+\[
+\vlinf{}{}{A\rightarrow\vlsbr(A.\Gamma)}{\Gamma}
+\]
+
+\[
+\vlinf{}{}{B}{\vls(A.[A\rightarrow B])}
+\]
+
+\[
+\vlinf{}{}{\top}{a}
+\]
+
+\[
+\vlinf{}{}{\top}{A\rightarrow\top}
+\]
+
+\[
+\vlinf{}{}{\vls(a.a)}{a}
+\]
+
+\[
+\vlinf{}{}{\vls([A\rightarrow B].[A\rightarrow C])}{A\rightarrow\vlsbr(B.C)}
+\]
+
+\subsection{Composition of Derivations}
+
+\[
+\vls(\vlder{ }{ }{C}{A}\;\;.\;\;\vlder{ }{ }{D}{B})
+\]
+
+\[
+A\;\;\rightarrow\;\;\vlder{ }{ }{C}{B}
+\]
+
+\[
+\vlderivation
+{
+	\vlde{ }{ }{C}
+	{
+		\vlde{ }{ }{B}
+		{
+			\vlhy{A}
+		}
+	}
+}
+\]
+
+\section{Flows}
+
+Extract the flows from the derivation in the standard way, with the added restriciton that we distinguish between the left- and the right-hand side of the contraction.
+
+\subsection{Reductions}
+
+The reductions work in the standard way, with the one addition of two contractions meeting in an interaction, which are rewritten to two interactions joining up the two left-hand side edges and the two right-hand side edges.
+
+It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
+
+This is very similar to somthing Ugo dal Lago told me about (the notion of path), so I need to look up that paper. My guess is that they use the paths to predict the size of the normal form of a term, we will get the same, but more explicitly.
+
+\section{Terms}
+
+These are the terms defined before.
+
+\subsection{Projections}
+
+As before.
+
+\subsection{Denotation}
+
+As before.
+
+\subsection{Typing}
+
+As before. For every typing derivation, there is a term.
+
+\subsection{Reductions}
+
+Beta reduction.
+
+\begin{lemma}
+If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
+\end{lemma}
+
+\begin{lemma}
+If $u$ is on normal form, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
+\end{lemma}
+
+\subsubsection{Deletion}
+
+\paragraph{Abstraction Reductions}
+
+\newcommand{\tempty}{{\mathtt{empty}}}
+
+\begin{definition}
+We say that a term is $\tempty$, if it is $\epsilon$, $\tempty[\leftarrow t]$ or $\tempty[x,y\leftarrow t]$.
+\end{definition}
+
+\begin{itemize}
+\item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
+\item $\lambda x.(u[\leftarrow y])\rightsquigarrow (\lambda x.u)[\leftarrow y]$, if $x\neq y$; and
+\item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
+\end{itemize}
+
+Strongly normalising.
+
+\subsubsection{Copying}
+
+Strongly normalising.
+
+\section{Flows and Terms}
+
+We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
+
+We extend the correspondence to terms that can not be typed and see what happens.
+
+\end{document}
