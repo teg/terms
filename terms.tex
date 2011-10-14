@@ -162,7 +162,7 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 
 \section{Terms}
 
-These are the terms defined before.
+\newcommand{\FV}{{\mathop{FV}}}
 
 \subsection{Projections}
 
@@ -178,25 +178,27 @@ As before. For every typing derivation, there is a term.
 
 \subsection{Reductions}
 
-Beta reduction.
+\subsubsection{$\beta$-reduction}
+
+\[
+(\lambda x.u)t \rightsquigarrow_\beta u\{x\leftarrow t\}
+\]
+
 
 \begin{lemma}
 If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
 \end{lemma}
 
-\begin{lemma}
-If $u$ is on normal form, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
-\end{lemma}
-
 \subsubsection{Deletion}
-
-\paragraph{Abstraction Reductions}
 
 \newcommand{\tempty}{{\mathtt{empty}}}
 
 \begin{definition}
-We say that a term is $\tempty$, if it is $\epsilon$, $\tempty[\leftarrow t]$ or $\tempty[x,y\leftarrow t]$.
+The set of $\tempty$ terms is defined as
+\[\tempty:=\epsilon\;|\;\tempty[\leftarrow t]\;|\;\tempty[x,y\leftarrow t]\;.\]
 \end{definition}
+
+\paragraph{Abstraction Reductions}
 
 \begin{itemize}
 \item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
@@ -204,11 +206,61 @@ We say that a term is $\tempty$, if it is $\epsilon$, $\tempty[\leftarrow t]$ or
 \item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
 \end{itemize}
 
+\paragraph{Substitution Reductions}
+
+\begin{itemize}
+\item $u[\leftarrow t[\leftarrow v]]\rightsquigarrow u[\leftarrow t][\leftarrow v]$;
+\item $u[\leftarrow t[x,y\leftarrow v]]\rightsquigarrow u[\leftarrow t][x,y\leftarrow v]$; and
+\item $u[\leftarrow x][x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
+\end{itemize}
+
+\paragraph{Pair and Empty Reductions}
+
+\begin{itemize}
+\item $u[\leftarrow\epsilon]\rightsquigarrow u$; and
+\item $u[\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u[\leftarrow t_1][\leftarrow t_2]$.
+\end{itemize}
+
 Strongly normalising.
 
-\subsubsection{Copying}
+\subsubsection{Duplication}
+
+\newcommand{\tpair}{{\mathtt{pair}}}
+
+\begin{definition}
+The set of $\tpair$ terms is defined as
+\[\tpair:=\langle u,v\rangle\;|\;\tpair[\leftarrow t]\;|\;\tpair[x,y\leftarrow t]\;.\]
+\end{definition}
+
+\paragraph{Abstraction Reductions}
+
+\begin{itemize}
+\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\langle x_1,x_2\rangle[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
+\item $\lambda x.(u[y_1,y_2\leftarrow y])\rightsquigarrow (\lambda x.u)[y_1,y_2\leftarrow y]$, if $x\neq y$;
+\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
+\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1[\leftarrow y],x_2\lambda y.t_2[\leftarrow y]\}$.
+\end{itemize}
+
+\paragraph{Substitution Reductions}
+
+\begin{itemize}
+\item $u[x,y\leftarrow t[\leftarrow v]]\rightsquigarrow u[x,y\leftarrow t][\leftarrow v]$; and
+\item $u[x_1,x_2\leftarrow t[y_1,y_2\leftarrow z]]\rightsquigarrow u[x_1,x_2\leftarrow t][y_1,y_2\leftarrow z]$.
+\end{itemize}
+
+\paragraph{Pair and Empty Reductions}
+
+\begin{itemize}
+\item $u[x,y\leftarrow\epsilon]\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
+\item $u[x,y\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
+\end{itemize}
 
 Strongly normalising.
+
+\begin{lemma}
+If $u$ is on normal form with respect to deletion and duplication, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
+\end{lemma}
+
 
 \section{Flows and Terms}
 
