@@ -11,6 +11,9 @@
 % To typeset derivations
 \usepackage[lutzsyntax,noxy]{virginialake}
 
+% Allow inclusion of graphics
+\usepackage[pdftex]{graphicx}
+
 % To get semantic brackets
 \usepackage{stmaryrd}
 
@@ -127,6 +130,35 @@ The reductions work in the standard way, with the one addition of two contractio
 It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
 
 This is very similar to somthing Ugo dal Lago told me about (the notion of path), so I need to look up that paper. My guess is that they use the paths to predict the size of the normal form of a term, we will get the same, but more explicitly.
+
+\[
+\vcenter{\hbox{\includegraphics{Figures/flow-beta-redex}}}
+\quad\rightsquigarrow_\beta\quad
+\vcenter{\hbox{\includegraphics{Figures/flow-beta}}}
+\]
+
+\[
+\vcenter{\hbox{\includegraphics{Figures/flow-cont-cont-redex}}}
+\quad\rightsquigarrow\quad
+\vcenter{\hbox{\includegraphics{Figures/flow-cont-cont}}}
+\]
+
+\[
+\vcenter{\hbox{\includegraphics{Figures/flow-cont-weak-redex}}}
+\quad\rightsquigarrow\quad
+\vcenter{\hbox{\includegraphics{Figures/flow-cont-weak}}}
+\]
+
+\[
+\vcenter{\hbox{\includegraphics{Figures/flow-weak-weak-redex}}}
+\quad\rightsquigarrow\quad
+\]
+
+\[
+\vcenter{\hbox{\includegraphics{Figures/flow-weak-cont-redex}}}
+\quad\rightsquigarrow\quad
+\vcenter{\hbox{\includegraphics{Figures/flow-weak-cont}}}
+\]
 
 \section{Terms}
 
