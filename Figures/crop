@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ $# == 0 ]; then
+	echo ""
+	echo "Example usage:"
+	echo ""
+	echo "./crop figure1"
+	echo "./crop figure1.tex"
+	echo "./crop figure1 figure2"
+	echo "./crop figure1.tex figure2.tex"
+	echo "./crop *.tex"
+	echo ""
+	echo "The script allows sty files to be placed in the immediate parent directory."
+	echo ""
+	echo "The script has not been tested at all except for the above examples. If it is used in other ways it might eat your babies."
+fi
+
+export TEXINPUTS="../:"
+
+function crop {
+        latex $1.tex || return 1
+        dvips $1.dvi || return 1
+        rm $fig.dvi || return 1
+        ps2pdf $1.ps || return 1
+        rm $1.ps || return 1
+        rm $1.aux || return 1
+        rm $1.log || return 1
+        pdfcrop $1.pdf $1.pdf || return 1
+}
+
+for figure in $@
+do
+	fig=`basename $figure .tex` || return 1
+	(crop $fig &)
+done
+
