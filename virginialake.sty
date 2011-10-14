@@ -4,7 +4,7 @@
 % to \vlupdate
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{virginialake}[2009/11/26 v1.23]
+\ProvidesPackage{virginialake}[2010/02/14 v1.28]
 \newif\ifvirginialakeusesxy\virginialakeusesxytrue
 \DeclareOption{noxy}{\virginialakeusesxyfalse}
 \newif\ifvirginialakepdftex\virginialakepdftexfalse
@@ -14,6 +14,8 @@
 \newif\ifvirginialakelutzsyntax\virginialakelutzsyntaxfalse
 \DeclareOption{lutzsyntax}{\virginialakelutzsyntaxtrue}
 \ProcessOptions
+\let\circledS\undefined\RequirePackage{amssymb}
+\RequirePackage{stmaryrd}
 \@ifpackageloaded{fp-basic}{\relax}{\RequirePackage{fp-basic}\FPmessagesfalse}
 \ifvirginialakeusesxy
     \RequirePackage[usenames]{color}
@@ -50,53 +52,37 @@
 
 %------------------------------------------------ MACROS FOR FORMULAE/STRUCTURES
 
-\newcommand{\vlor}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \vee           $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \vee           $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\vee           $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\vee           $}}}}
+\newcommand\vlbin[1]{\mathchoice
+      {\mathbin{\raise.2ex \hbox{$\scriptstyle      #1$}}}
+      {\mathbin{\raise.2ex \hbox{$\scriptstyle      #1$}}}
+      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle#1$}}}
+      {\mathbin{           \hbox{$\scriptscriptstyle#1$}}}}
 
-\newcommand{\vlan}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \wedge         $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \wedge         $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\wedge         $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\wedge         $}}}}
+\newif\ifvllinear\vllinearfalse
 
-\newcommand{\vlim}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \to            $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \to            $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\to            $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\to            $}}}}
+\newcommand{\vlor}{\ifvllinear\vlbin\varoplus\else\vlbin\vee\fi}
 
-\newcommand{\vlmi}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \leftarrow     $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \leftarrow     $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\leftarrow     $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\leftarrow     $}}}}
+\newcommand{\vlan}{\ifvllinear\vlbin\binampersand\else\vlbin\wedge\fi}
 
-\newcommand{\vldi}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \leftrightarrow$}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \leftrightarrow$}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\leftrightarrow$}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\leftrightarrow$}}}}
+\newcommand{\vlpa}{\vlbin\bindnasrepma}
 
-\newcommand{\vlne}{\mathchoice
-      {\mathord{\raise.2ex \hbox{$\scriptstyle      \neg           $}}}
-      {\mathord{\raise.2ex \hbox{$\scriptstyle      \neg           $}}}
-      {\mathord{\raise.12ex\hbox{$\scriptscriptstyle\neg           $}}}
-      {\mathord{           \hbox{$\scriptscriptstyle\neg           $}}}}
+\newcommand{\vlte}{\vlbin\varotimes}
 
-\newcommand{\vljm}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \supset        $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \supset        $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\supset        $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\supset        $}}}}
+\newcommand{\vlse}{\vlbin\triangleleft}
 
-\newcommand{\vlmj}{\mathchoice
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \subset        $}}}
-      {\mathbin{\raise.2ex \hbox{$\scriptstyle      \subset        $}}}
-      {\mathbin{\raise.12ex\hbox{$\scriptscriptstyle\subset        $}}}
-      {\mathbin{           \hbox{$\scriptscriptstyle\subset        $}}}}
+\newcommand{\vlim}{\vlbin\to}
+
+\newcommand{\vlli}{\vlbin\multimap}
+
+\newcommand{\vlmi}{\vlbin\leftarrow}
+
+\newcommand{\vldi}{\vlbin\leftrightarrow}
+
+\newcommand{\vlne}{\vlbin\neg}
+
+\newcommand{\vljm}{\vlbin\supset}
+
+\newcommand{\vlmj}{\vlbin\subset}
 
 \newcommand{\vlgoodsyntax}{
    \def\vlleftparbracket   {\ifvirginialakesmallbrackets[\else\left [\fi}
@@ -111,8 +97,19 @@
    \let\vlrightcopbracketex\vlrightcopbracket
    \let\vlleftcopbracketcn \vlleftcopbracket
    \let\vlrightcopbracketcn\vlrightcopbracket
-   \def\vldsp{\ }
-   \def\vlcsp{\ }
+   \def\vlleftseqbracket   {\ifvirginialakesmallbrackets\langle\else
+                                                   \left\langle\fi}
+   \def\vlrightseqbracket  {\ifvirginialakesmallbrackets\rangle\else
+                                                  \right\rangle\fi}
+   \let\vlleftseqbracketex \vlleftseqbracket
+   \let\vlrightseqbracketex\vlrightseqbracket
+   \let\vlleftseqbracketcn \vlleftseqbracket
+   \let\vlrightseqbracketcn\vlrightseqbracket
+   \def\vldsa{\ }
+   \def\vlcsa{\ }
+   \def\vldsm{\ }
+   \def\vlcsm{\ }
+   \def\vlnsm{\ }
    \let\vldots=\dots}
 
 \newcommand{\vllutzsyntax}{
@@ -128,8 +125,19 @@
    \let\vlrightcopbracketex\relax
    \let\vlleftcopbracketcn \{
    \let\vlrightcopbracketcn\}
-   \def\vldsp{\vlor}
-   \def\vlcsp{\vlan}
+   \def\vlleftseqbracket   {\ifvirginialakesmallbrackets\langle\else
+                                                   \left\langle\fi}
+   \def\vlrightseqbracket  {\ifvirginialakesmallbrackets\rangle\else
+                                                  \right\rangle\fi}
+   \let\vlleftseqbracketex \relax
+   \let\vlrightseqbracketex\relax
+   \let\vlleftseqbracketcn \{
+   \let\vlrightseqbracketcn\}
+   \def\vldsa{\vlor}
+   \def\vlcsa{\vlan}
+   \def\vldsm{\vlpa}
+   \def\vlcsm{\vlte}
+   \def\vlnsm{\vlse}
    \let\vldots=\cdots}
 
 \newcommand{\vlnogoodsyntax}{
@@ -145,8 +153,17 @@
    \let\vlrightcopbracketex\relax
    \let\vlleftcopbracketcn \{
    \let\vlrightcopbracketcn\}
-   \def\vldsp{\vlor}
-   \def\vlcsp{\vlan}
+   \let\vlleftseqbracket   \vlleftparbracket
+   \let\vlrightseqbracket  \vlrightparbracket
+   \let\vlleftseqbracketex \relax
+   \let\vlrightseqbracketex\relax
+   \let\vlleftseqbracketcn \{
+   \let\vlrightseqbracketcn\}
+   \def\vldsa{\vlor}
+   \def\vlcsa{\vlan}
+   \def\vldsm{\vlpa}
+   \def\vlcsm{\vlte}
+   \def\vlnsm{\vlse}
    \let\vldots=\cdots}
 
 \ifvirginialakegoodsyntax
@@ -166,16 +183,25 @@
 \newcommand{\vlnosmallbrackets}{\virginialakesmallbracketsfalse}
 
 \newcommand{\vlprepstructuresaux}{\catcode`.=\active
+                                  \catcode`;=\active
                                   \catcode`[=\active
                                   \catcode`]=\active
                                   \catcode`(=\active
-                                  \catcode`)=\active}
+                                  \catcode`)=\active
+                                  \catcode`<=\active
+                                  \catcode`>=\active}
+
+\newcommand{\lt}{<}
+\newcommand{\gt}{>}
 
 \let\vldot  .
+\let\vlscol ;
 \let\vlsqbrl[
 \let\vlsqbrr]
 \let\vlrobrl(
 \let\vlrobrr)
+\let\vlanbrl<
+\let\vlanbrr>
 
 \newif\ifvirginialakestructuressyntax\virginialakestructuressyntaxtrue
 
@@ -187,40 +213,61 @@
 \vlprepstructuresaux
 
 \gdef\vlnos{\let.\vldot
+            \let;\vlscol
             \let[\vlsqbrl
             \let]\vlsqbrr
             \let(\vlrobrl
-            \let)\vlrobrr}
+            \let)\vlrobrr
+            \let<\vlanbrl
+            \let>\vlanbrr}
 
 \gdef\vlprepstructures{\ifvirginialakestructuressyntax
                           \vlprepstructuresaux\vlnos\fi}
 
-\gdef\vlparopen  {\vlleftparbracket  \bgroup\catcode`.=\active\let.\vldsp
+\gdef\vlparopen  {\vlleftparbracket  \bgroup\catcode`.=\active\let.\vldsa
+                                            \catcode`;=\active\let;\vldsm
                                             \catcode`]=\active\let]\vlparclose}
 
-\gdef\vlcopopen  {\vlleftcopbracket  \bgroup\catcode`.=\active\let.\vlcsp
-                                            \catcode`)=\active\let)\vlcopclose}
-
-\gdef\vlparopenex{\vlleftparbracketex\bgroup\catcode`.=\active\let.\vldsp\vlsbr
+\gdef\vlparopenex{\vlleftparbracketex\bgroup\catcode`.=\active\let.\vldsa
+                                            \catcode`;=\active\let;\vldsm\vlsbr
                                            \catcode`]=\active\let]\vlparcloseex}
 
-\gdef\vlcopopenex{\vlleftcopbracketex\bgroup\catcode`.=\active\let.\vlcsp\vlsbr
-                                           \catcode`)=\active\let)\vlcopcloseex}
-
-\gdef\vlparopencn{\vlleftparbracketcn\bgroup\catcode`.=\active\let.\vldsp\vlsbr
+\gdef\vlparopencn{\vlleftparbracketcn\bgroup\catcode`.=\active\let.\vldsa
+                                            \catcode`;=\active\let;\vldsm\vlsbr
                                            \catcode`]=\active\let]\vlparclosecn}
 
-\gdef\vlcopopencn{\vlleftcopbracketcn\bgroup\catcode`.=\active\let.\vlcsp\vlsbr
+\gdef\vlcopopen  {\vlleftcopbracket  \bgroup\catcode`.=\active\let.\vlcsa
+                                            \catcode`;=\active\let;\vlcsm
+                                            \catcode`)=\active\let)\vlcopclose}
+
+\gdef\vlcopopenex{\vlleftcopbracketex\bgroup\catcode`.=\active\let.\vlcsa
+                                            \catcode`;=\active\let;\vlcsm\vlsbr
+                                           \catcode`)=\active\let)\vlcopcloseex}
+
+\gdef\vlcopopencn{\vlleftcopbracketcn\bgroup\catcode`.=\active\let.\vlcsa
+                                            \catcode`;=\active\let;\vlcsm\vlsbr
                                            \catcode`)=\active\let)\vlcopclosecn}
 
+\gdef\vlseqopen  {\vlleftseqbracket  \bgroup\catcode`;=\active\let;\vlnsm
+                                            \catcode`>=\active\let>\vlseqclose}
+
+\gdef\vlseqopenex{\vlleftseqbracketex\bgroup\catcode`;=\active\let;\vlnsm\vlsbr
+                                           \catcode`>=\active\let>\vlseqcloseex}
+
+\gdef\vlseqopencn{\vlleftseqbracketcn\bgroup\catcode`;=\active\let;\vlnsm\vlsbr
+                                           \catcode`>=\active\let>\vlseqclosecn}
+
 \gdef\vls  {\catcode`[=\active\let[\vlparopenex
-            \catcode`(=\active\let(\vlcopopenex}
+            \catcode`(=\active\let(\vlcopopenex
+            \catcode`<=\active\let<\vlseqopenex}
 
 \gdef\vlsbr{\catcode`[=\active\let[\vlparopen
-            \catcode`(=\active\let(\vlcopopen}
+            \catcode`(=\active\let(\vlcopopen
+            \catcode`<=\active\let<\vlseqopen}
 
 \gdef\vlscn{\catcode`[=\active\let[\vlparopencn
-            \catcode`(=\active\let(\vlcopopencn}
+            \catcode`(=\active\let(\vlcopopencn
+            \catcode`<=\active\let<\vlseqopencn}
 
 \gdef\vlupdate #1{
    \expandafter\let\csname\expandafter\vlgobble\string #1vltemp\endcsname #1
@@ -241,6 +288,12 @@
 \newcommand{\vlcopcloseex}{\egroup\vlrightcopbracketex}
 
 \newcommand{\vlcopclosecn}{\egroup\vlrightcopbracketcn}
+
+\newcommand{\vlseqclose  }{\egroup\vlrightseqbracket  }
+
+\newcommand{\vlseqcloseex}{\egroup\vlrightseqbracketex}
+
+\newcommand{\vlseqclosecn}{\egroup\vlrightseqbracketcn}
 
 \newcommand{\vlhole}{\{\enspace\}}
 
@@ -440,11 +493,15 @@
 
 \newcommand{\vlde}[4]{\vldf{#1}{#2}{#3}{#4}1}
 
+\newcommand{\vldd}[4]{\vldf{#1}{#2}{#3}{#4}2}
+
 \newcommand{\vlpf}[4]{\vldf{#1}{#2}{#3}
    {\vlhyaux{\vbox to0pt{\vss\kern\fontdimen22\textfont2\kern-.2pt
                          \hbox{$\scriptstyle-$}\vss}}}{#4}}
 
 \newcommand{\vlpr}[3]{\vlpf{#1}{#2}{#3}1}
+
+\newcommand{\vlpd}[3]{\vlpf{#1}{#2}{#3}2}
 
 \newcommand{\vlproofaux}[4]{\vlderivationaux{\vlpf{#2}{#3}{#4}{#1}}}
 
@@ -478,6 +535,10 @@
                   \hss\copy0}%
    \vfill}
 
+\newcommand{\vlhdotter}{\vfill
+   \hbox to\hsize{\cleaders\vbox to0pt{\vss
+       \hbox{\kern-.35pt$.$\kern-.35pt}\vss}\hskip\hsize}\vfill}
+
 \newcommand{\vldsinaux}[3]{\vldaux
    {\smash{\ifvlsmallleftlabels\lower\fontdimen22\scriptfont2
                           \else\lower\fontdimen22\textfont2\fi
@@ -486,6 +547,16 @@
    {\vlhy{#3}}
    {\kern\deropen}
    {\vbox to.4pt{\vlhruler}}
+   {\kern\deropen}}
+
+\newcommand{\vldsidaux}[3]{\vldaux
+   {\smash{\ifvlsmallleftlabels\lower\fontdimen22\scriptfont2
+                          \else\lower\fontdimen22\textfont2\fi
+                                       \hbox{$\vlleftlabel {#1}$}}}
+   {\smash{\lower\fontdimen22\textfont2\hbox{$\vlrightlabel{#2}$}}}
+   {\vlhy{#3}}
+   {\kern\deropen}
+   {\vbox to.4pt{\vlhdotter}}
    {\kern\deropen}}
 
 \newdimen\vldsiqdimenleft
@@ -525,6 +596,15 @@
    \derboxinwidth=1em\advance\derboxinwidth by-\wd\derboxin
    \ifdim\derboxinwidth>0pt\divide\derboxinwidth by2\else\derboxinwidth=0pt\fi
    \vldsiqaux{#1}{#2}{\kern\derboxinwidth\box\derboxin\kern\derboxinwidth}}
+
+\newcommand{\vlid}[4]{#4
+   \dercldim=\derldim
+   \derccdim=\dercdim
+   \dercrdim=\derrdim
+   \setbox\derboxin=\hbox{$#3$}
+   \derboxinwidth=1em\advance\derboxinwidth by-\wd\derboxin
+   \ifdim\derboxinwidth>0pt\divide\derboxinwidth by2\else\derboxinwidth=0pt\fi
+   \vldsidaux{#1}{#2}{\kern\derboxinwidth\box\derboxin\kern\derboxinwidth}}
 
 \newcommand{\vliin}[5]{\derquad=\fontdimen6\textfont2
    {#4}
@@ -581,6 +661,8 @@
 
 \newcommand{\vliqfaux  }[4]{\vlderivationaux{\vliq  {#1}{#2}{#3}{\vlhy{#4}}}}
 
+\newcommand{\vlindaux  }[4]{\vlderivationaux{\vlid  {#1}{#2}{#3}{\vlhy{#4}}}}
+
 \newcommand{\vliinfaux }[5]{\vlderivationaux{\vliin {#1}{#2}{#3}{\vlhy{#4}}
                                                                 {\vlhy{#5}}}}
 
@@ -598,6 +680,8 @@
 \newcommand{\vlinf  }{\vlderivationinit\vlinfaux  }
 
 \newcommand{\vliqf  }{\vlderivationinit\vliqfaux  }
+
+\newcommand{\vlidf  }{\vlderivationinit\vlindaux  }
 
 \newcommand{\vliinf }{\vlderivationinit\vliinfaux }
 
@@ -679,7 +763,6 @@
 \newdimen\atflowthickthree
 \newdimen\atflowthickfour
 \newdimen\atflowthickfive
-\newdimen\atflowthicksix
 \newdimen\atflowlabeldistance
 \newdimen\atflowmaux
 
@@ -692,7 +775,6 @@
 \atflowthickthree     =160\atflowunit
 \atflowthickfour      =120\atflowunit
 \atflowthickfive      = 40\atflowunit
-\atflowthicksix       = 10\atflowunit
 \atflowlabeldistance  =220\atflowunit}
 
 \afsetunits
@@ -1949,40 +2031,12 @@
 \newcommand{\afvdj}{\xybox{<\atflowelwidth,0pt>:<0pt,\atflowelheight>::
 (0,0);(0,1)**[|<\atflowthickone>]@{.}}}
 
-\newcommand{\affrl}[3]
-{
-  \xybox
-  {
-    <\atflowelwidth,0pt>:<0pt,\atflowelheight>::
-    (0 , 0);
-    (0 ,#2)**[|<\atflowthicktwo>]@{-};
-    (#1,#2)**[|<\atflowthicktwo>]@{-};
-    (#1, 0)**[|<\atflowthicktwo>]@{-};
-    (0 , 0)**[|<\atflowthicktwo>]@{-};
-    (#1,#2)**{}?*+{#3}
-  }
-}
-
-\newcommand{\affr}[2]{\affrl{#1}{#2}{}}
-
-\newcommand{\affrnl}[3]
-{
-  \xybox
-  {
-    <\atflowelwidth,0pt>:<0pt,\atflowelheight>::
-    (0 , 0);
-    (0 ,#2)**[|<\atflowthicktwo>]@{-};
-    (#1,#2)**[|<\atflowthicktwo>]@{-};
-    (#1, 0)**[|<\atflowthicktwo>]@{-};
-    (0 , 0)**[|<\atflowthicktwo>]@{-};
-    (#1,#2)**[|<\atflowthicksix>]@{--};
-    (0 ,#2);
-    (#1, 0)**[|<\atflowthicksix>]@{--};
-    ( 0,#2)**{}?*+{#3}
-  }
-}
-
-\newcommand{\affrn}[2]{\affrnl{#1}{#2}{}}
+\newcommand{\affr}[2]{\xybox{<\atflowelwidth,0pt>:<0pt,\atflowelheight>::
+(0 , 0);
+(0 ,#2)**[|<\atflowthicktwo>]@{-};
+(#1,#2)**[|<\atflowthicktwo>]@{-};
+(#1, 0)**[|<\atflowthicktwo>]@{-};
+(0 , 0)**[|<\atflowthicktwo>]@{-}}}
 
 \newcommand{\afexpd}[3]{\xybox{<\atflowelwidth,0pt>:<0pt,\atflowelheight>::
 (#1,#2)+(#3,0);(0,0)**[|<\atflowthickone>]@{-};
