@@ -194,7 +194,22 @@ The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp
 
 \subsection{Denotation}
 
-As before.
+\begin{definition}
+The denotation of a term $t$, is written $\llbracket t\rrbracket$, and is defined as follows
+\begin{itemize}
+	\item $\llbracket x \rrbracket=x$;
+	\item $\llbracket \lambda x. u\rrbracket =\lambda x.\llbracket u\rrbracket$;
+	\item $\llbracket (u)v\rrbracket = \llbracket(u)\rrbracket\llbracket v\rrbracket$;
+	\item $\llbracket u[\leftarrow v]\rrbracket=\llbracket u\rrbracket$; and
+	\item $\llbracket u[x,y\leftarrow]\rrbracket=\llbracket u\rrbracket\{x\leftarrow \llbracket\pi_1(v)\rrbracket,y\leftarrow\llbracket\pi_2(v)\rrbracket\}$.
+\end{itemize}
+\end{definition}
+
+Note that the denotation is not defined for all terms.
+
+\begin{lemma}
+$\llbracket u\{x\leftarrow t\}\rrbracket=\llbracket u\rrbracket\{x\leftarrow\llbracket t\rrbracket\}$.
+\end{lemma}
 
 \subsection{Typing}
 
