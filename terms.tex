@@ -125,7 +125,7 @@ Extract the flows from the derivation in the standard way, with the added restri
 
 \subsection{Reductions}
 
-The reductions work in the standard way, with the one addition of two contractions meeting in an interaction, which are rewritten to two interactions joining up the two left-hand side edges and the two right-hand side edges.
+The reductions work in the standard way, with the one addition of two contractions meeting in an interaction, which are rewritten to two interactions joining up the two left-hand side edges and the two right-hand side edges, repsectivly.
 
 It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
 
@@ -162,7 +162,18 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 
 \section{Terms}
 
-\newcommand{\FV}{{\mathop{FV}}}
+\newcommand{\FV}{{\mathop{FV}}
+\newcommand{\Var}{{\mathop(Var)}}
+
+\begin{itemize}
+\item $x$;
+\item $\lambda x.u$, where $x\in\FV(u)$;
+\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
+\item $u[\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset$;
+\item $u[x,y\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
+\item $\epsilon$; and
+\item $\langle u,v\rangle, where $\Var(u)\cap\Var(t)=\emptyset.
+\end{itemize}
 
 \subsection{Projections}
 
