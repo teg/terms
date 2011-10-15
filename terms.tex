@@ -48,14 +48,14 @@ Translate derivations from the standard system in natural deduction in seqeunt s
 \subsection{Formulae}
 
 \begin{definition}
-A  formula is defined to be
-\begin{itemize}
-\item the unit true: $\top$;
-\item an atom: $a$;
-\item a conjunction: $\vls(A.B)$; or
-\item an implication: $A\rightarrow B$,
-\end{itemize}
-where no conjunction or unit may occur to the left of an implication.
+	A  formula is defined to be
+	\begin{itemize}
+		\item the unit true: $\top$;
+		\item an atom: $a$;
+		\item a conjunction: $\vls(A.B)$; or
+		\item an implication: $A\rightarrow B$,
+	\end{itemize}
+	where no conjunction or unit may occur to the left of an implication.
 \end{definition}
 
 We consider formulae modulo associativity and commutativity of conjunction, and we take $\top$ to be the unit for conjunction.
@@ -63,13 +63,13 @@ We consider formulae modulo associativity and commutativity of conjunction, and 
 \subsubsection{Projections of Formulae}
 
 \begin{definition}
-The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
-\begin{itemize}
-\item $\pi_1(\top)=\pi_2(\top)=\top$;
-\item $\pi_1(a)=\pi_2(a)=a$;
-\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
-\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
-\end{itemize}
+	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
+	\begin{itemize}
+		\item $\pi_1(\top)=\pi_2(\top)=\top$;
+		\item $\pi_1(a)=\pi_2(a)=a$;
+		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
+		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
+	\end{itemize}
 \end{definition}
 
 Note: we need to possibly reconsider the equations on conjunction\ldots.
@@ -113,13 +113,13 @@ A\;\;\rightarrow\;\;\vlder{ }{ }{C}{B}
 \[
 \vlderivation
 {
-	\vlde{ }{ }{C}
-	{
-		\vlde{ }{ }{B}
-		{
-			\vlhy{A}
-		}
-	}
+\vlde{ }{ }{C}
+{
+\vlde{ }{ }{B}
+{
+\vlhy{A}
+}
+}
 }
 \]
 
@@ -170,13 +170,13 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
 
 \begin{itemize}
-\item $x$;
-\item $\lambda x.u$, where $x\in\FV(u)$;
-\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
-\item $u[\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset$;
-\item $u[x,y\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
-\item $\epsilon$; and
-\item $\langle u,v\rangle, where $\Var(u)\cap\Var(t)=\emptyset.
+	\item $x$;
+	\item $\lambda x.u$, where $x\in\FV(u)$;
+	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
+	\item $u[\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset$;
+	\item $u[x,y\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
+	\item $\epsilon$; and
+	\item $\langle u,v\rangle$ where $\Var(u)\cap\Var(t)=\emptyset$.
 \end{itemize}
 
 \subsection{Projections}
@@ -201,7 +201,7 @@ As before. For every typing derivation, there is a term.
 
 
 \begin{lemma}
-If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
+	If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
 \end{lemma}
 
 \subsubsection{Deletion}
@@ -209,31 +209,31 @@ If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\b
 \newcommand{\tempty}{{\mathtt{empty}}}
 
 \begin{definition}
-The set of $\tempty$ terms is defined as
-\[\tempty:=\epsilon\;|\;\tempty[\leftarrow t]\;|\;\tempty[x,y\leftarrow t]\;.\]
+	The set of $\tempty$ terms is defined as
+	\[\tempty:=\epsilon\;|\;\tempty[\leftarrow t]\;|\;\tempty[x,y\leftarrow t]\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-\item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
-\item $\lambda x.(u[\leftarrow y])\rightsquigarrow (\lambda x.u)[\leftarrow y]$, if $x\neq y$; and
-\item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
+	\item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
+	\item $\lambda x.(u[\leftarrow y])\rightsquigarrow (\lambda x.u)[\leftarrow y]$, if $x\neq y$; and
+	\item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
 \end{itemize}
 
 \paragraph{Substitution Reductions}
 
 \begin{itemize}
-\item $u[\leftarrow t[\leftarrow v]]\rightsquigarrow u[\leftarrow t][\leftarrow v]$;
-\item $u[\leftarrow t[x,y\leftarrow v]]\rightsquigarrow u[\leftarrow t][x,y\leftarrow v]$; and
-\item $u[\leftarrow x][x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
+	\item $u[\leftarrow t[\leftarrow v]]\rightsquigarrow u[\leftarrow t][\leftarrow v]$;
+	\item $u[\leftarrow t[x,y\leftarrow v]]\rightsquigarrow u[\leftarrow t][x,y\leftarrow v]$; and
+	\item $u[\leftarrow x][x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
 \end{itemize}
 
 \paragraph{Pair and Empty Reductions}
 
 \begin{itemize}
-\item $u[\leftarrow\epsilon]\rightsquigarrow u$; and
-\item $u[\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u[\leftarrow t_1][\leftarrow t_2]$.
+	\item $u[\leftarrow\epsilon]\rightsquigarrow u$; and
+	\item $u[\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u[\leftarrow t_1][\leftarrow t_2]$.
 \end{itemize}
 
 Strongly normalising.
@@ -243,37 +243,37 @@ Strongly normalising.
 \newcommand{\tpair}{{\mathtt{pair}}}
 
 \begin{definition}
-The set of $\tpair$ terms is defined as
-\[\tpair:=\langle u,v\rangle\;|\;\tpair[\leftarrow t]\;|\;\tpair[x,y\leftarrow t]\;.\]
+	The set of $\tpair$ terms is defined as
+	\[\tpair:=\langle u,v\rangle\;|\;\tpair[\leftarrow t]\;|\;\tpair[x,y\leftarrow t]\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\langle x_1,x_2\rangle[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
-\item $\lambda x.(u[y_1,y_2\leftarrow y])\rightsquigarrow (\lambda x.u)[y_1,y_2\leftarrow y]$, if $x\neq y$;
-\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
-\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1[\leftarrow y],x_2\lambda y.t_2[\leftarrow y]\}$.
+	\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\langle x_1,x_2\rangle[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
+	\item $\lambda x.(u[y_1,y_2\leftarrow y])\rightsquigarrow (\lambda x.u)[y_1,y_2\leftarrow y]$, if $x\neq y$;
+	\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
+	\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1[\leftarrow y],x_2\lambda y.t_2[\leftarrow y]\}$.
 \end{itemize}
 
 \paragraph{Substitution Reductions}
 
 \begin{itemize}
-\item $u[x,y\leftarrow t[\leftarrow v]]\rightsquigarrow u[x,y\leftarrow t][\leftarrow v]$; and
-\item $u[x_1,x_2\leftarrow t[y_1,y_2\leftarrow z]]\rightsquigarrow u[x_1,x_2\leftarrow t][y_1,y_2\leftarrow z]$.
+	\item $u[x,y\leftarrow t[\leftarrow v]]\rightsquigarrow u[x,y\leftarrow t][\leftarrow v]$; and
+	\item $u[x_1,x_2\leftarrow t[y_1,y_2\leftarrow z]]\rightsquigarrow u[x_1,x_2\leftarrow t][y_1,y_2\leftarrow z]$.
 \end{itemize}
 
 \paragraph{Pair and Empty Reductions}
 
 \begin{itemize}
-\item $u[x,y\leftarrow\epsilon]\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
-\item $u[x,y\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
+	\item $u[x,y\leftarrow\epsilon]\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
+	\item $u[x,y\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
 \end{itemize}
 
 Strongly normalising.
 
 \begin{lemma}
-If $u$ is on normal form with respect to deletion and duplication, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
+	If $u$ is on normal form with respect to deletion and duplication, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
 \end{lemma}
 
 
