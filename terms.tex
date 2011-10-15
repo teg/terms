@@ -228,6 +228,14 @@ As before. For every typing derivation, there is a term.
 	If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
 \end{lemma}
 
+\begin{proof}
+	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
+	\[
+	\llbracket(\lambda x.w)t\rrbracket = (\lambda x.\llbracket w\rrbracket)\llbracket t\rrbracket\rightsquigarrow_\beta\llbracket w\rrbracket\{x\leftarrow\llbracket t\rrbracket\} = \llbracket w\{x\leftarrow\}\rrbracket\;,
+	\]
+	as required.
+\end{proof}
+
 \subsubsection{Deletion}
 
 \newcommand{\tempty}{{\mathtt{empty}}}
