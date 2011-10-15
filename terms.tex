@@ -268,7 +268,32 @@ As before. For every typing derivation, there is a term.
 	\item $u[\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u[\leftarrow t_1][\leftarrow t_2]$.
 \end{itemize}
 
-Strongly normalising.
+\begin{definition}
+	The \emph{weight} of a deletion, $u[\leftarrow t]$, (resp, of a duplication, $u[x,y\leftarrow t]$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
+	\begin{itemize}
+		\item $|w|_v$, if $t$ is $w[\leftarrow w']$ (resp., $w[x,y\leftarrow w']$);
+		\item $1+|w|_v$, if $t$ is $\lambda x.w$;
+		\item $|w|_v$, if $t$ is a variable bound by a duplication of $w$ in $v$;
+		\item $0$, if $t$ is any otehr variable;
+		\item $0$, if $t$ is an application;
+		\item $1$, if $t$ is $\epsilon$; or
+		\item $|w|_v+|w'|_v$ (resp., 1), if $t$ is $\langle w,w'\rangle$.
+	\end{itemize}
+\end{definition}
+
+\begin{lemma}
+The deletion reductions are strongly normalising.
+\end{lemma}
+
+\begin{proof}
+Each deletion reduction rule replaces a deletion by zero or more of lower weight.
+\end{proof}
+
+\begin{lemma}
+\[
+u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m)w_m][x_1]\cdots[\leftarrow x_n].
+\]
+\end{lemma}
 
 \subsubsection{Duplication}
 
