@@ -179,9 +179,18 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 	\item $\langle u,v\rangle$ where $\Var(u)\cap\Var(t)=\emptyset$.
 \end{itemize}
 
-\subsection{Projections}
+\subsection{Projection of Terms}
 
-As before.
+\begin{definition}
+The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp., $\pi_2(t)$), and is defined as follows
+\begin{itemize}
+	\item $\pi_1(\epsilon)=\pi_2(\epsilon)=\epsilon$;
+	\item $\pi_1(x)=\pi_2(x)=x$;
+	\item $\pi_1(\langle u,v\rangle)=u$ (resp., $\pi_2(\langle u,v\rangle)=v$);
+	\item $\pi_1(\lambda x.u)=\lambda x.\pi_1(u)$ (resp., $\pi_2(\lambda x.u)=\lambda x.\pi_2(u)$); and
+	\item $\pi_1( (u)v)=(\pi_1(u))\pi_1(v)$ (resp., $\pi_2( (u)v)=(\pi_2(u))\pi_2(v)$).
+\end{itemize}
+\end{definition}
 
 \subsection{Denotation}
 
