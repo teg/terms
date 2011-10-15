@@ -60,18 +60,6 @@ Translate derivations from the standard system in natural deduction in seqeunt s
 
 We consider formulae modulo associativity and commutativity of conjunction, and we take $\top$ to be the unit for conjunction.
 
-\subsubsection{Projections of Formulae}
-
-\begin{definition}
-	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
-	\begin{itemize}
-		\item $\pi_1(\top)=\pi_2(\top)=\top$;
-		\item $\pi_1(a)=\pi_2(a)=a$;
-		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
-		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
-	\end{itemize}
-\end{definition}
-
 \subsection{Inference Rules}
 
 \[
@@ -122,6 +110,18 @@ A\;\;\rightarrow\;\;\vlder{ }{ }{C}{B}
 \]
 
 When we compose derivations vertically, we consider conjunctions to be associate, commutative, and have unit $\top$.
+
+\subsubsection{Projections of Formulae}
+
+\begin{definition}
+	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
+	\begin{itemize}
+		\item $\pi_1(\top)=\pi_2(\top)=\top$;
+		\item $\pi_1(a)=\pi_2(a)=a$;
+		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
+		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
+	\end{itemize}
+\end{definition}
 
 \section{Flows}
 
