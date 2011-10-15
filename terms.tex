@@ -249,7 +249,7 @@ As before. For every typing derivation, there is a term.
 
 \begin{itemize}
 	\item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
-	\item $\lambda x.(u[\leftarrow y])\rightsquigarrow (\lambda x.u)[\leftarrow y]$, if $x\neq y$; and
+	\item $u[\leftarrow\lambda x.(u[\leftarrow t])\rightsquigarrow u[\leftarrow(\lambda x.u)][\leftarrow t]$, if $x\not\in\FV(t)$; and
 	\item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
 \end{itemize}
 
