@@ -305,6 +305,20 @@ Strongly normalising.
 
 We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
 
+\newcommand{\fl}{{\mathop{\mathsf{fl}}}}
+
+\begin{definition}
+	The flow of any well-typed term $t$, denoted $\fl(t)$, is the flow of the corresponding tying derivation.
+\end{definition}
+
+\begin{theorem}
+	If $u\rightsquigarrow v$ (resp., $u\rightsquigarrow_\beta v$), then $\fl(u)\rightsquigarrow^\star\fl(v)$ (resp., $\fl(u)\rightsquigarrow^\star_\beta\fl(v)$).
+\end{theorem}
+
+\begin{theorem}
+	For every term $u$ and flow $\alpha$, such that $\alpha$ is the normal form of $\fl(u)$, there exists a term $v$, such that $v$ is the normal form of $u$ and $\fl(v)=\alpha$.
+\end{theorem}
+
 We extend the correspondence to terms that can not be typed and see what happens.
 
 \end{document}
