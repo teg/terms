@@ -327,7 +327,9 @@ u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m
 	\item $u[x,y\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
 \end{itemize}
 
-Strongly normalising.
+\begin{lemma}
+	The deletion and duplication reductions are strongly normalising.
+\end{lemma}
 
 \begin{lemma}
 	If $u$ is on normal form with respect to deletion and duplication, and $\llbracket u\rrbracket\rightsquigarrow_\beta v'$, then there is a $v$, such that $u\rightsquigarrow_\beta v$ and $\llbracket v\rrbracket=v'$.
