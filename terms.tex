@@ -170,13 +170,14 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
 \newcommand{\terpair}[2]{{\langle{#1},{#2}\rangle}}
 \newcommand{\terdel}[1]{{[\leftarrow{#1}]}}
+\newcommand{\terdup}[3]{{[{#1},{#2}\leftarrow{#3}]}}
 
 \begin{itemize}
 	\item $x$;
 	\item $\lambda x.u$, where $x\in\FV(u)$;
 	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
 	\item $u\terdel{t}$, where $\Var(u)\cap\Var(t)=\emptyset$;
-	\item $u[x,y\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
+	\item $u\terdup{x}{y}{t}$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
 	\item $\epsilon$; and
 	\item $\terpair{u}{v}$ where $\Var(u)\cap\Var(t)=\emptyset$.
 \end{itemize}
@@ -184,33 +185,35 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 \subsection{Projection of Terms}
 
 \begin{definition}
-The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp., $\pi_2(t)$), and is defined as follows
-\begin{itemize}
-	\item $\pi_1(\epsilon)=\pi_2(\epsilon)=\epsilon$;
-	\item $\pi_1(x)=\pi_2(x)=x$;
-	\item $\pi_1(\terpair{u}{v})=u\terdel{v}$ (resp., $\pi_2(\terpair{u}{v})=v\terdel{u}$);
-	\item $\pi_1(\lambda x.u)=\lambda x.\pi_1(u)$ (resp., $\pi_2(\lambda x.u)=\lambda x.\pi_2(u)$); and
-	\item $\pi_1( (u)v)=(\pi_1(u))\pi_1(v)$ (resp., $\pi_2( (u)v)=(\pi_2(u))\pi_2(v)$).
-\end{itemize}
+	The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp., $\pi_2(t)$), and is defined as follows
+	\begin{itemize}
+		\item $\pi_1(\epsilon)=\pi_2(\epsilon)=\epsilon$;
+		\item $\pi_1(x)=\pi_2(x)=x$;
+		\item $\pi_1(\terpair{u}{v})=u\terdel{v}$ (resp., $\pi_2(\terpair{u}{v})=v\terdel{u}$);
+		\item $\pi_1(\lambda x.u)=\lambda x.\pi_1(u)$ (resp., $\pi_2(\lambda x.u)=\lambda x.\pi_2(u)$); and
+		\item $\pi_1( (u)v)=(\pi_1(u))\pi_1(v)$ (resp., $\pi_2( (u)v)=(\pi_2(u))\pi_2(v)$).
+	\end{itemize}
 \end{definition}
 
 \subsection{Denotation}
 
+\newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
+
 \begin{definition}
-The denotation of a term $t$, is written $\llbracket t\rrbracket$, and is defined as follows
-\begin{itemize}
-	\item $\llbracket x \rrbracket=x$;
-	\item $\llbracket \lambda x. u\rrbracket =\lambda x.\llbracket u\rrbracket$;
-	\item $\llbracket (u)v\rrbracket = \llbracket(u)\rrbracket\llbracket v\rrbracket$;
-	\item $\llbracket u\terdel{v}\rrbracket=\llbracket u\rrbracket$; and
-	\item $\llbracket u[x,y\leftarrow]\rrbracket=\llbracket u\rrbracket\{x\leftarrow \llbracket\pi_1(v)\rrbracket,y\leftarrow\llbracket\pi_2(v)\rrbracket\}$.
+	The denotation of a term $t$, is written $\terden{t}$, and is defined as follows
+	\begin{itemize}
+		\item $\terden{x}=x$;
+		\item $\terden{\lambda x. u}=\lambda x.\terden{u}$;
+		\item $\terden{(u)v}=(\terden{u})\terden{v}$;
+		\item $\terden{u\terdel{v}}=\terden{u}$; and
+		\item $\terden{u\terdup{x}{y}{v}}=\terden{u}\{x\leftarrow \terden{\pi_1(v)},y\leftarrow\terden{\pi_2(v)}\}$.
 \end{itemize}
 \end{definition}
 
 Note that the denotation is not defined for all terms.
 
 \begin{lemma}
-$\llbracket u\{x\leftarrow t\}\rrbracket=\llbracket u\rrbracket\{x\leftarrow\llbracket t\rrbracket\}$.
+	$\terden{u\{x\leftarrow t\}}=\terden{u}\{x\leftarrow\terden{t}\}$.
 \end{lemma}
 
 \subsection{Typing}
@@ -227,13 +230,13 @@ As before. For every typing derivation, there is a term.
 
 
 \begin{lemma}
-	If $u\rightsquigarrow_\beta v$, then $\llbracket u\rrbracket \rightsquigarrow_\beta\llbracket v\rrbracket$
+	If $u\rightsquigarrow_\beta v$, then $\terden{u}\rightsquigarrow_\beta\terden{v}$
 \end{lemma}
 
 \begin{proof}
 	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
 	\[
-	\llbracket(\lambda x.w)t\rrbracket = (\lambda x.\llbracket w\rrbracket)\llbracket t\rrbracket\rightsquigarrow_\beta\llbracket w\rrbracket\{x\leftarrow\llbracket t\rrbracket\} = \llbracket w\{x\leftarrow\}\rrbracket\;,
+	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow\}}\;,
 	\]
 	as required.
 \end{proof}
@@ -244,7 +247,7 @@ As before. For every typing derivation, there is a term.
 
 \begin{definition}
 	The set of $\tempty$ terms is defined as
-	\[\tempty:=\epsilon\;|\;\tempty\terdel{t}\;|\;\tempty[x,y\leftarrow t]\;.\]
+	\[\tempty:=\epsilon\;|\;\tempty\terdel{t}\;|\;\tempty\terdup{x}{y}{t}\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
@@ -259,8 +262,8 @@ As before. For every typing derivation, there is a term.
 
 \begin{itemize}
 	\item $u\terdel{t\terdel{v}}\rightsquigarrow u\terdel{t}\terdel{v}$;
-	\item $u\terdel{t[x,y\leftarrow v]}\rightsquigarrow u\terdel{t}[x,y\leftarrow v]$; and
-	\item $u\terdel{x}[x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
+	\item $u\terdel{t\terdup{x}{y}{v}}\rightsquigarrow u\terdel{t}\terdup{x}{y}{v}$; and
+	\item $u\terdel{x}\terdup{x}{y}{t}\rightsquigarrow u\{y\leftarrow t\}$.
 \end{itemize}
 
 \paragraph{Pair and Empty Reductions}
@@ -271,9 +274,9 @@ As before. For every typing derivation, there is a term.
 \end{itemize}
 
 \begin{definition}
-	The \emph{weight} of a deletion, $u\terdel{t}$, (resp, of a duplication, $u[x,y\leftarrow t]$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
+	The \emph{weight} of a deletion, $u\terdel{t}$, (resp, of a duplication, $u\terdup{x}{y}{t}$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
 	\begin{itemize}
-		\item $|w|_v$, if $t$ is $w\terdel{w'}$ (resp., $w[x,y\leftarrow w']$);
+		\item $|w|_v$, if $t$ is $w\terdel{w'}$ (resp., $w\terdup{x}{y}{w'}$);
 		\item $1+|w|_v$, if $t$ is $\lambda x.w$;
 		\item $|w|_v$, if $t$ is a variable bound by a duplication of $w$ in $v$;
 		\item $0$, if $t$ is any otehr variable;
@@ -303,30 +306,30 @@ u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terd
 
 \begin{definition}
 	The set of $\tpair$ terms is defined as
-	\[\tpair:=\terpair{u}{v}\;|\;\tpair\terdel{t}\;|\;\tpair[x,y\leftarrow t]\;.\]
+	\[\tpair:=\terpair{u}{v}\;|\;\tpair\terdel{t}\;|\;\tpair\terdup{x}{y}{t}\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-	\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\terpair{x_1}{x_2}[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
-	\item $\lambda x.(u[y_1,y_2\leftarrow y])\rightsquigarrow (\lambda x.u)[y_1,y_2\leftarrow y]$, if $x\neq y$;
-	\item $u[x_1,x_2\leftarrow(\lambda y.\terpair{t_1}{t_2}[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
-	\item $u[x_1,x_2\leftarrow(\lambda y.\terpair{t_1}{t_2}\terdel{y})]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1\terdel{y},x_2\lambda y.t_2\terdel{y}\}$.
+	\item $u\terdup{z_1}{z_2}{\lambda y.t}\rightsquigarrow u\terdup{z_1}{z_2}{\lambda y.\terpair{x_1}{x_2}\terdup{x_1}{x_2}{t}}$, if $t$ is not a $\tpair$;
+	\item $\lambda x.(u\terdup{y_1}{y_2}{y})\rightsquigarrow (\lambda x.u)\terdup{y_1}{y_2}{y}$, if $x\neq y$;
+	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdup{y_1}{y_2}{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
+	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdel{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1\terdel{y},x_2\lambda y.t_2\terdel{y}\}$.
 \end{itemize}
 
 \paragraph{Substitution Reductions}
 
 \begin{itemize}
-	\item $u[x,y\leftarrow t\terdel{v}]\rightsquigarrow u[x,y\leftarrow t]\terdel{v}$; and
-	\item $u[x_1,x_2\leftarrow t[y_1,y_2\leftarrow z]]\rightsquigarrow u[x_1,x_2\leftarrow t][y_1,y_2\leftarrow z]$.
+	\item $u\terdup{x}{y}{t\terdel{v}}\rightsquigarrow u\terdup{x}{y}{t}\terdel{v}$; and
+	\item $u\terdup{x_1}{x_2}{t\terdup{y_1}{y_2}{z}}\rightsquigarrow u\terdup{x_1}{x_2}{t}\terdup{y_1}{y_2}{z}$.
 \end{itemize}
 
 \paragraph{Pair and Empty Reductions}
 
 \begin{itemize}
-	\item $u[x,y\leftarrow\epsilon]\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
-	\item $u[x,y\leftarrow\terpair{t_1}{t_2}]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
+	\item $u\terdup{x}{y}{\epsilon}\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
+	\item $u\terdup{x}{y}{\terpair{t_1}{t_2}}\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
 \end{itemize}
 
 \begin{lemma}
@@ -334,26 +337,26 @@ u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terd
 \end{lemma}
 
 \begin{lemma}
-	$u[x,y\leftarrow t]\rightsquigarrow^\star u\{x\rightarrow t',y\rightarrow t''\}[x_1,y_1\leftarrow(v_1)w_1]\cdots[x_m,y_m\leftarrow(v_m)w_m][x_{m+1},y_{m+1}\leftarrow z_{m+1}]\cdots[x_n,y_n\leftarrow z_n]=terdel{z_{n+1}}\cdots\terdel{z_p}$,
+	$u\terdup{x}{y}{t}\rightsquigarrow^\star u\{x\rightarrow t',y\rightarrow t''\}\terdup{x_1}{y_1}{(v_1)w_1}\cdots\terdup{x_m}{y_m}{(v_m)w_m}\terdup{x_{m+1}}{y_{m+1}}{z_{m+1}}\cdots\terdup{x_n}{y_n}{z_n}=terdel{z_{n+1}}\cdots\terdel{z_p}$,
 where $t'$ (resp., $t''$) is obtained from $\pi_1(t)$ (resp., $\pi_2(t)$) by replacing every free variable $z_{m+1},\dots,z_n$ with $x_{m+1},\dots,x_n$ (resp., $y_{m+1},\dots,y_n$) and every application $(v_1)w_1,\dots,(v_m)w_m$ with $x_1,\dots,x_m$ (resp., $y_1,\dots,y_m$).
 \end{lemma}
 
 \begin{lemma}
-	If $u\rightsquigarrow v$, then $\llbracket u\rrbracket = \llbracket v\rrbracket$.
+	If $u\rightsquigarrow v$, then $\terden{u}=\terden{v}$.
 \end{lemma}
 
 \begin{proof}
-	The theorem follows trivially for the deletion reductions, as $\llbracket u\terdel{v}\rrbracket = \llbracket u\rrbracket$.
+	The theorem follows trivially for the deletion reductions, as $\terden{u\terdel{v}}=\terden{u}$.
 
-The casees for the duplication reductions follows by a straight-forward case analysis.
+	The casees for the duplication reductions follows by a straight-forward case analysis.
 \end{proof}
 
 \begin{theorem}
-	If\/ $\llbracket u\rrbracket \rightsquigarrow_\beta \llbracket v \rrbracket$, then $u'\rightsquigarrow_\beta v'$, where $\llbracket u'\rrbracket = \llbracket u \rrbracket$ and $\llbracket v \rrbracket = \llbracket v'\rrbracket$.
+	If\/ $\terden{u}\rightsquigarrow_\beta\terden{v}$, then $u'\rightsquigarrow_\beta v'$, where $\terden{u'}=\terden{u}$ and $\terden{v}=\terden{v'}$.
 \end{theorem}
 
 \begin{proof}
-	Let $u'$ be the normal form of $u$ with respect to the deletion and duplication reductions. It is straight-forward to verify by a case-analysis that $u'$ contains the same $\beta$-redex as $\llbracket u'\rrbracket$, so $v'$ is the corresponding contractum.
+	Let $u'$ be the normal form of $u$ with respect to the deletion and duplication reductions. It is straight-forward to verify by a case-analysis that $u'$ contains the same $\beta$-redex as $\terden{u'}$, so $v'$ is the corresponding contractum.
 \end{proof}
 
 
