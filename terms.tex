@@ -168,15 +168,17 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 
 \newcommand{\FV}{{\mathop{\mathsf{FV}}}}
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
+\newcommand{\terpair}[2]{{\langle{#1},{#2}\rangle}}
+\newcommand{\terdel}[1]{{[\leftarrow{#1}]}}
 
 \begin{itemize}
 	\item $x$;
 	\item $\lambda x.u$, where $x\in\FV(u)$;
 	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
-	\item $u[\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset$;
+	\item $u\terdel{t}$, where $\Var(u)\cap\Var(t)=\emptyset$;
 	\item $u[x,y\leftarrow t]$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
 	\item $\epsilon$; and
-	\item $\langle u,v\rangle$ where $\Var(u)\cap\Var(t)=\emptyset$.
+	\item $\terpair{u}{v}$ where $\Var(u)\cap\Var(t)=\emptyset$.
 \end{itemize}
 
 \subsection{Projection of Terms}
@@ -186,7 +188,7 @@ The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp
 \begin{itemize}
 	\item $\pi_1(\epsilon)=\pi_2(\epsilon)=\epsilon$;
 	\item $\pi_1(x)=\pi_2(x)=x$;
-	\item $\pi_1(\langle u,v\rangle)=u$ (resp., $\pi_2(\langle u,v\rangle)=v$);
+	\item $\pi_1(\terpair{u}{v})=u\terdel{v}$ (resp., $\pi_2(\terpair{u}{v})=v\terdel{u}$);
 	\item $\pi_1(\lambda x.u)=\lambda x.\pi_1(u)$ (resp., $\pi_2(\lambda x.u)=\lambda x.\pi_2(u)$); and
 	\item $\pi_1( (u)v)=(\pi_1(u))\pi_1(v)$ (resp., $\pi_2( (u)v)=(\pi_2(u))\pi_2(v)$).
 \end{itemize}
@@ -200,7 +202,7 @@ The denotation of a term $t$, is written $\llbracket t\rrbracket$, and is define
 	\item $\llbracket x \rrbracket=x$;
 	\item $\llbracket \lambda x. u\rrbracket =\lambda x.\llbracket u\rrbracket$;
 	\item $\llbracket (u)v\rrbracket = \llbracket(u)\rrbracket\llbracket v\rrbracket$;
-	\item $\llbracket u[\leftarrow v]\rrbracket=\llbracket u\rrbracket$; and
+	\item $\llbracket u\terdel{v}\rrbracket=\llbracket u\rrbracket$; and
 	\item $\llbracket u[x,y\leftarrow]\rrbracket=\llbracket u\rrbracket\{x\leftarrow \llbracket\pi_1(v)\rrbracket,y\leftarrow\llbracket\pi_2(v)\rrbracket\}$.
 \end{itemize}
 \end{definition}
@@ -242,42 +244,42 @@ As before. For every typing derivation, there is a term.
 
 \begin{definition}
 	The set of $\tempty$ terms is defined as
-	\[\tempty:=\epsilon\;|\;\tempty[\leftarrow t]\;|\;\tempty[x,y\leftarrow t]\;.\]
+	\[\tempty:=\epsilon\;|\;\tempty\terdel{t}\;|\;\tempty[x,y\leftarrow t]\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-	\item $u[\leftarrow\lambda x.t]\rightsquigarrow u[\leftarrow\lambda x.\epsilon[\leftarrow t]]$, if $t$ is not $\tempty$;
-	\item $u[\leftarrow\lambda x.(u[\leftarrow t])\rightsquigarrow u[\leftarrow(\lambda x.u)][\leftarrow t]$, if $x\not\in\FV(t)$; and
-	\item $u[\leftarrow(\lambda x.\epsilon[\leftarrow x])]\rightsquigarrow u$.
+	\item $u\terdel{\lambda x.t}\rightsquigarrow u\terdel{\lambda x.\epsilon\terdel{t}}$, if $t$ is not $\tempty$;
+	\item $u\terdel{\lambda x.(u\terdel{t})}\rightsquigarrow u\terdel{(\lambda x.u)}\terdel{t}$, if $x\not\in\FV(t)$; and
+	\item $u\terdel{(\lambda x.\epsilon\terdel{x})}\rightsquigarrow u$.
 \end{itemize}
 
 \paragraph{Substitution Reductions}
 
 \begin{itemize}
-	\item $u[\leftarrow t[\leftarrow v]]\rightsquigarrow u[\leftarrow t][\leftarrow v]$;
-	\item $u[\leftarrow t[x,y\leftarrow v]]\rightsquigarrow u[\leftarrow t][x,y\leftarrow v]$; and
-	\item $u[\leftarrow x][x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
+	\item $u\terdel{t\terdel{v}}\rightsquigarrow u\terdel{t}\terdel{v}$;
+	\item $u\terdel{t[x,y\leftarrow v]}\rightsquigarrow u\terdel{t}[x,y\leftarrow v]$; and
+	\item $u\terdel{x}[x,y\leftarrow t]\rightsquigarrow u\{y\leftarrow t\}$.
 \end{itemize}
 
 \paragraph{Pair and Empty Reductions}
 
 \begin{itemize}
-	\item $u[\leftarrow\epsilon]\rightsquigarrow u$; and
-	\item $u[\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u[\leftarrow t_1][\leftarrow t_2]$.
+	\item $u\terdel{\epsilon}\rightsquigarrow u$; and
+	\item $u\terdel{\terpair{t_1}{t_2}}\rightsquigarrow u\terdel{t_1}\terdel{t_2}$.
 \end{itemize}
 
 \begin{definition}
-	The \emph{weight} of a deletion, $u[\leftarrow t]$, (resp, of a duplication, $u[x,y\leftarrow t]$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
+	The \emph{weight} of a deletion, $u\terdel{t}$, (resp, of a duplication, $u[x,y\leftarrow t]$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
 	\begin{itemize}
-		\item $|w|_v$, if $t$ is $w[\leftarrow w']$ (resp., $w[x,y\leftarrow w']$);
+		\item $|w|_v$, if $t$ is $w\terdel{w'}$ (resp., $w[x,y\leftarrow w']$);
 		\item $1+|w|_v$, if $t$ is $\lambda x.w$;
 		\item $|w|_v$, if $t$ is a variable bound by a duplication of $w$ in $v$;
 		\item $0$, if $t$ is any otehr variable;
 		\item $0$, if $t$ is an application;
 		\item $1$, if $t$ is $\epsilon$; or
-		\item $|w|_v+|w'|_v$ (resp., 1), if $t$ is $\langle w,w'\rangle$.
+		\item $|w|_v+|w'|_v$ (resp., 1), if $t$ is $\terpair{w}{w'}$.
 	\end{itemize}
 \end{definition}
 
@@ -291,7 +293,7 @@ Each deletion reduction rule replaces a deletion by zero or more of lower weight
 
 \begin{lemma}
 \[
-u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m)w_m][x_1]\cdots[\leftarrow x_n].
+u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terdel{x_1}\cdots\terdel{x_n}.
 \]
 \end{lemma}
 
@@ -301,22 +303,22 @@ u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m
 
 \begin{definition}
 	The set of $\tpair$ terms is defined as
-	\[\tpair:=\langle u,v\rangle\;|\;\tpair[\leftarrow t]\;|\;\tpair[x,y\leftarrow t]\;.\]
+	\[\tpair:=\terpair{u}{v}\;|\;\tpair\terdel{t}\;|\;\tpair[x,y\leftarrow t]\;.\]
 \end{definition}
 
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-	\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\langle x_1,x_2\rangle[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
+	\item $u[z_1,z_2\leftarrow\lambda y.t]\rightsquigarrow u[z_1,z_2\leftarrow\lambda y.\terpair{x_1}{x_2}[x_1,x_2\leftarrow t]]$, if $t$ is not a $\tpair$;
 	\item $\lambda x.(u[y_1,y_2\leftarrow y])\rightsquigarrow (\lambda x.u)[y_1,y_2\leftarrow y]$, if $x\neq y$;
-	\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
-	\item $u[x_1,x_2\leftarrow(\lambda y.\langle t_1,t_2\rangle[\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1[\leftarrow y],x_2\lambda y.t_2[\leftarrow y]\}$.
+	\item $u[x_1,x_2\leftarrow(\lambda y.\terpair{t_1}{t_2}[y_1,y_2\leftarrow y])]\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
+	\item $u[x_1,x_2\leftarrow(\lambda y.\terpair{t_1}{t_2}\terdel{y})]\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1\terdel{y},x_2\lambda y.t_2\terdel{y}\}$.
 \end{itemize}
 
 \paragraph{Substitution Reductions}
 
 \begin{itemize}
-	\item $u[x,y\leftarrow t[\leftarrow v]]\rightsquigarrow u[x,y\leftarrow t][\leftarrow v]$; and
+	\item $u[x,y\leftarrow t\terdel{v}]\rightsquigarrow u[x,y\leftarrow t]\terdel{v}$; and
 	\item $u[x_1,x_2\leftarrow t[y_1,y_2\leftarrow z]]\rightsquigarrow u[x_1,x_2\leftarrow t][y_1,y_2\leftarrow z]$.
 \end{itemize}
 
@@ -324,7 +326,7 @@ u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m
 
 \begin{itemize}
 	\item $u[x,y\leftarrow\epsilon]\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
-	\item $u[x,y\leftarrow\langle t_1,t_2\rangle]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
+	\item $u[x,y\leftarrow\terpair{t_1}{t_2}]\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
 \end{itemize}
 
 \begin{lemma}
@@ -332,7 +334,7 @@ u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m
 \end{lemma}
 
 \begin{lemma}
-	$u[x,y\leftarrow t]\rightsquigarrow^\star u\{x\rightarrow t',y\rightarrow t''\}[x_1,y_1\leftarrow(v_1)w_1]\cdots[x_m,y_m\leftarrow(v_m)w_m][x_{m+1},y_{m+1}\leftarrow z_{m+1}]\cdots[x_n,y_n\leftarrow z_n][\leftarrow z_{n+1}]\cdots[\leftarrow z_p]$,
+	$u[x,y\leftarrow t]\rightsquigarrow^\star u\{x\rightarrow t',y\rightarrow t''\}[x_1,y_1\leftarrow(v_1)w_1]\cdots[x_m,y_m\leftarrow(v_m)w_m][x_{m+1},y_{m+1}\leftarrow z_{m+1}]\cdots[x_n,y_n\leftarrow z_n]=terdel{z_{n+1}}\cdots\terdel{z_p}$,
 where $t'$ (resp., $t''$) is obtained from $\pi_1(t)$ (resp., $\pi_2(t)$) by replacing every free variable $z_{m+1},\dots,z_n$ with $x_{m+1},\dots,x_n$ (resp., $y_{m+1},\dots,y_n$) and every application $(v_1)w_1,\dots,(v_m)w_m$ with $x_1,\dots,x_m$ (resp., $y_1,\dots,y_m$).
 \end{lemma}
 
@@ -341,7 +343,7 @@ where $t'$ (resp., $t''$) is obtained from $\pi_1(t)$ (resp., $\pi_2(t)$) by rep
 \end{lemma}
 
 \begin{proof}
-The theorem follows trivially for the deletion reductions, as $\llbracket u[\leftarrow v]\rrbracket = \llbracket u\rrbracket$.
+	The theorem follows trivially for the deletion reductions, as $\llbracket u\terdel{v}\rrbracket = \llbracket u\rrbracket$.
 
 The casees for the duplication reductions follows by a straight-forward case analysis.
 \end{proof}
