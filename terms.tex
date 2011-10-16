@@ -131,7 +131,7 @@ Extract the flows from the derivation in the standard way, with the added restri
 
 The reductions work in the standard way, with the one addition of two contractions meeting in an interaction, which are rewritten to two interactions joining up the two left-hand side edges and the two right-hand side edges, repsectivly.
 
-It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
+It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, and every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
 
 This is very similar to somthing Ugo dal Lago told me about (the notion of path), so I need to look up that paper. My guess is that they use the paths to predict the size of the normal form of a term, we will get the same, but more explicitly.
 
@@ -240,7 +240,7 @@ As before. For every typing derivation, there is a term.
 \begin{proof}
 	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
 	\[
-	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow\}}\;,
+	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow t\}}\;,
 	\]
 	as required.
 \end{proof}
@@ -257,8 +257,9 @@ As before. For every typing derivation, there is a term.
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-	\item $u\terdel{\lambda x.t}\rightsquigarrow u\terdel{\lambda x.\epsilon\terdel{t}}$, if $t$ is not $\tempty$;
-	\item $u\terdel{\lambda x.(u\terdel{t})}\rightsquigarrow u\terdel{(\lambda x.u)}\terdel{t}$, if $x\not\in\FV(t)$; and
+	\item $u\terdel{\lambda x.t}\rightsquigarrow u\terdel{\lambda x.\epsilon\terdel{t}}$, if $t\not\in\tempty$; and
+% the following should be among the equations
+% \item $u\terdel{\lambda x.(u\terdel{t})}\rightsquigarrow u\terdel{(\lambda x.u)}\terdel{t}$, if $x\not\in\FV(t)$; and
 	\item $u\terdel{(\lambda x.\epsilon\terdel{x})}\rightsquigarrow u$.
 \end{itemize}
 
@@ -316,8 +317,9 @@ u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terd
 \paragraph{Abstraction Reductions}
 
 \begin{itemize}
-	\item $u\terdup{z_1}{z_2}{\lambda y.t}\rightsquigarrow u\terdup{z_1}{z_2}{\lambda y.\terpair{x_1}{x_2}\terdup{x_1}{x_2}{t}}$, if $t$ is not a $\tpair$;
-	\item $\lambda x.(u\terdup{y_1}{y_2}{y})\rightsquigarrow (\lambda x.u)\terdup{y_1}{y_2}{y}$, if $x\neq y$;
+	\item $u\terdup{z_1}{z_2}{\lambda y.t}\rightsquigarrow u\terdup{z_1}{z_2}{\lambda y.\terpair{x_1}{x_2}\terdup{x_1}{x_2}{t}}$, if $t\not\in\tpair$;
+% the following should be an equation
+%\item $\lambda x.(u\terdup{y_1}{y_2}{y})\rightsquigarrow (\lambda x.u)\terdup{y_1}{y_2}{y}$, if $x\neq y$;
 	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdup{y_1}{y_2}{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
 	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdel{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1\terdel{y},x_2\lambda y.t_2\terdel{y}\}$.
 \end{itemize}
