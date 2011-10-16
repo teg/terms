@@ -336,7 +336,15 @@ u[\leftarrow t]\rightsquigarrow^\star u[\leftarrow(v_1)w_1]\cdots[\leftarrow(v_m
 where $t'$ (resp., $t''$) is obtained from $\pi_1(t)$ (resp., $\pi_2(t)$) by replacing every free variable $z_{m+1},\dots,z_n$ with $x_{m+1},\dots,x_n$ (resp., $y_{m+1},\dots,y_n$) and every application $(v_1)w_1,\dots,(v_m)w_m$ with $x_1,\dots,x_m$ (resp., $y_1,\dots,y_m$).
 \end{lemma}
 
+\begin{lemma}
+	If $u\rightsquigarrow v$, then $\llbracket u\rrbracket = \llbracket v\rrbracket$.
+\end{lemma}
 
+\begin{proof}
+The theorem follows trivially for the deletion reductions, as $\llbracket u[\leftarrow v]\rrbracket = \llbracket u\rrbracket$.
+
+The casees for the duplication reductions follows by a straight-forward case analysis.
+\end{proof}
 \section{Flows and Terms}
 
 We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
