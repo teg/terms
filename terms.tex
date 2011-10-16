@@ -345,6 +345,16 @@ The theorem follows trivially for the deletion reductions, as $\llbracket u[\lef
 
 The casees for the duplication reductions follows by a straight-forward case analysis.
 \end{proof}
+
+\begin{theorem}
+	If\/ $\llbracket u\rrbracket \rightsquigarrow_\beta \llbracket v \rrbracket$, then $u'\rightsquigarrow_\beta v'$, where $\llbracket u'\rrbracket = \llbracket u \rrbracket$ and $\llbracket v \rrbracket = \llbracket v'\rrbracket$.
+\end{theorem}
+
+\begin{proof}
+	Let $u'$ be the normal form of $u$ with respect to the deletion and duplication reductions. It is straight-forward to verify by a case-analysis that $u'$ contains the same $\beta$-redex as $\llbracket u'\rrbracket$, so $v'$ is the corresponding contractum.
+\end{proof}
+
+
 \section{Flows and Terms}
 
 We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
