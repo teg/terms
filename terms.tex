@@ -195,6 +195,10 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 	\end{itemize}
 \end{definition}
 
+\begin{lemma}
+For every term $t$, $\FV(t)=\FV(\pi_1(t))=\FV(\pi_2(t))$.
+\end{lemma}
+
 \subsection{Denotation}
 
 \newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
@@ -331,6 +335,10 @@ u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terd
 	\item $u\terdup{x}{y}{\epsilon}\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
 	\item $u\terdup{x}{y}{\terpair{t_1}{t_2}}\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
 \end{itemize}
+
+\begin{lemma}
+	For any two terms $u$ and $v$, such that $u\rightsquigarrow v$, we have that $\FV(u)=\FV(v)$.
+\end{lemma}
 
 \begin{lemma}
 	The deletion and duplication reductions are strongly normalising.
