@@ -3,7 +3,7 @@
 % A more pleasant font
 \usepackage[T1]{fontenc} % use postscript type 1 fonts
 \usepackage{textcomp} % use symbols in TS1 encoding
-\usepackage[garamond]{mathdesign} % use a nice font
+%\usepackage[garamond]{mathdesign} % use a nice font
 
 % Improves the text layout
 \usepackage{microtype}
@@ -30,18 +30,163 @@
 % Might not be needed, didn't check.
 \usepackage{amsfonts}
 
-\title{Atomic Flows for a Simply Typed Term Calculus}
-\author{Tom Gundersen and Michel Parigot}
+\title{An Atomic Term Calculus}
+\author{Tom Gundersen, Willem Heijltjes and Michel Parigot}
 
 \begin{document}
 
 \maketitle
 
 \abstract{
-A proof system for minimal logic with explicit, atomic structural rules is introduced, together with a normalisation procedure. Atomic flows are defined based on the proof system, and a flow rewriting system is given, which can simulate the proof normalisation. Furthermore, a term calculus is defined, together with a rewrite system corresponding to the proof normalisation. A denotation of the term calculus is given in terms of the lambda calculus, and it is shown that the new term calculus can simulate $\beta$-reduction and preserve strong normalisation. Lastly, the correspondence between the flow rewriting system and the term rewriting system is explored.
+A proof system for minimal logic with explicit, atomic structural rules is introduced, together with a normalisation procedure. Furthermore, a term calculus is defined, together with an atomic rewrite system corresponding to the proof normalisation. A denotation of the term calculus is given in terms of the lambda calculus, and it is shown that the new term calculus simulates $\beta$-reduction and preserve strong normalisation.
 }
 
+\section{Terms}
+
+\newcommand{\FV}{{\mathop{\mathsf{FV}}}}
+\newcommand{\Var}{{\mathop{\mathsf{Var}}}}
+\newcommand{\tertuple}[2]{{\langle{#1},\dots,{#2}{\rangle}}}
+\newcommand{\tershare}[4]{{{#1}[{#2},\dots,{#3}\leftarrow{#4}]}}
+\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
+
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.u$, where $x\in\FV(u)$;
+	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
+	\item $\tertuple{t_1}{t_n}$, where $\Var(t_i)\cap\Var(t_j)=\emptyset$ if $i\neq j$; and
+	\item $\tershare{u}{x_1}{x_n}{t}$, where $x_1,\dots,x_n\in\FV(u)$ and $\Var(u)\cap\Var(t)=\emptyset$.
+\end{itemize}
+
+\subsection{Equivalence of Terms}
+
+To be typeset. We want the monoid equations on sharing and we want commutativity of independent sharings.
+
+\subsection{Projection of Terms}
+
+\begin{definition}
+	The i-th projection of a term, $t$, is denoted $\terpr{i}{t}$ and is defined as follows
+	\begin{itemize}
+		\item $\terpr{i}{x}=x$;
+		\item $\terpr{i}{\lambda x.u}=\lambda x.\terpr{i}{u}$;
+		\item $\terpr{i}{(u)v}=(\terpr{i}{u})\terpr{i}{v}$;
+		\item $\terpr{i}{\tertuple{t_1}{t_n}}=t_i$ if $i\leq n$ and undefined otherwise; and
+		\item $\terpr{i}{\tershare{u}{x_1}{x_n}{t}}$ is undefined.
+	\end{itemize}
+\end{definition}
+
+%\begin{lemma}
+%For every term $t$, $\FV(t)=\FV(\pi_1(t))=\FV(\pi_2(t))$.
+%\end{lemma}
+
+\subsection{Denotation}
+
+\newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
+\newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
+
+\begin{definition}
+	The denotation of a term $t$, is written $\terden{t}$, and is defined as follows
+	\begin{itemize}
+		\item $\terden{x}=x$;
+		\item $\terden{\lambda x. u}=\lambda x.\terden{u}$;
+		\item $\terden{(u)v}=(\terden{u})\terden{v}$;
+		\item $\terden{\tertuple{t_1}{t_n}}=\tertuple{\terden{t_1}}{\terden{t_n}}$; and
+		\item $\terden{\tershare{u}{x_1}{x_n}{t}}=\terden{\tersubn{u}{x_1}{\terpr{1}{\terden{t}}}{x_n}{\terpr{i}{\terden{t}}}}$.
+\end{itemize}
+\end{definition}
+
+We need (probably?) to restrict our definition of terms so that we can show that that every term has a denotation, but that should be simple enough (currently it is not true as we can build nonsensical terms where such as $t[x,y,z <- <u,v>]$).
+
+\begin{lemma}
+	$\terden{u\{x\leftarrow t\}}=\terden{u}\{x\leftarrow\terden{t}\}$.
+\end{lemma}
+
+The rewrite $\rightsquigarrow$ will be defined later, I'm just putting the lemmas early to give a hint at what we are aiming for.
+
+\begin{lemma}
+$\forall u,v$ such that $u\rightsquigarrow v$, $\terden{u}=\terden{v}$.
+\end{lemma}
+
+\subsection{Sharing Normal Form}
+
+\begin{definition}
+A term is \emph{shared} (this is misleading, find a better term!) if it is of the form $\tershare{u}{x_1}{x_n}{t}$.
+\end{definition}
+
+\begin{definition}
+A term is on \emph{sharing normal form} if it is one of
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.(\tershare{u}{z_1}{z_n}{x})$
+	\item $(u)v$
+	\item $\tertuple{t_1}{t_n}$; and
+	\item $\tershare{\tershare{u}{x_{1,1}}{x_{1,k_1}}{x_1}\cdots}{x_{n,1}}{x_{n,k_n}}{x_n}$,
+\end{itemize}
+where $u,v,t_1,\dots,t_n$ are on sharing normal form and are not shared, and $\{x_{1,1},\dots,x_{1,k_1},\dots,x_{n,1},\dots,x_{n,k_n}\}\cap\{x_1,\dots,x_n\}=\emptyset.$
+\end{definition}
+
+In other words, a term is on sharing normal form if the only sharing that happens is at the outside of the term and sharing of bound variables immediately inside an abstraction.
+
+\begin{lemma}
+$\forall u, \exists v$ such that $u\rightsquigarrow^\star v$ and $v$ is on sharing normal form.
+\end{lemma}
+
+\subsection{$\beta$-reduction}
+
+\[
+(\lambda x.u)t \rightsquigarrow_\beta u\{x\leftarrow t\}
+\]
+
+\begin{lemma}
+	If $u\rightsquigarrow_\beta v$, then $\terden{u}\rightsquigarrow_\beta\terden{v}$
+\end{lemma}
+
+%\begin{proof}
+%	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
+%	\[
+%	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow t\}}\;,
+%	\]
+%	as required.
+%\end{proof}
+
+This one is a bit ugly, find a better way to express it:
+
+\begin{lemma}
+$\forall u,v$ such that $\terden{u}\rightsquigarrow_\beta\terden{v}$ and $u,v$ are on sharing normal form, then $\exists w$ such that $u\rightsquigarrow_\beta w$ and $w\rightsquigarrow^\star v$.
+\end{lemma}
+
+\subsection{Sharing Reductions}
+
+\subsubsection{Abstraction}
+
+\begin{itemize}
+\item $\tershare{u}{x_1}{x_n}{\lambda y. t} \rightsquigarrow
+      \tershare{u}{x_1}{x_n}{\lambda y.\tershare{\tertuple{z_1}{z_n}}{z_1}{z_n}{t}}$; and
+\item $\tershare{u}{x_1}{x_n}{\lambda y.\tershare{\tertuple{t_1}{t_n}}{z_{1,1}}{z_{n,k_n}}{y}} \rightsquigarrow$
+      \[\tershare{u}{x_1}{x_n}{\tertuple{\lambda z_1.\tershare{t_1}{z_{1,1}}{z_{1,1_k}}{z_1}}{\lambda z_n.\tershare{t_n}{z_{n,1}}{z_{n,n_k}}{z_n}}},\]
+where $\{z_{i,1},\dots,z_{i,k_i}\}\subset\FV(t_i)$.
+\end{itemize}
+
+\subsubsection{Application}
+
+\begin{itemize}
+\item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tershare{u}{x_1}{x_n}{\tertuple{(z_1)y_i}{(z_n)y_n}}}{z_1}{z_n}{v}}{y_1}{y_n}{t}$; and
+\item $(\tershare{u}{x_1}{x_n}{v})t \rightsquigarrow \tershare{(u)t}{x_1}{x_n}{v}$.
+\end{itemize}
+
+\subsubsection{Tuple}
+
+\begin{itemize}
+\item $\tershare{u}{x_1}{x_n}{\tertuple{t_1}{t_n}} \rightsquigarrow u\{x_1\leftarrow t_1,\dots,x_n\leftarrow t_n\}$.
+\end{itemize}
+
+\subsubsection{Sharing}
+\begin{itemize}
+\item $\tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}} \rightsquigarrow \tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_n}{t}$.
+\end{itemize}
+
 \section{Derivations}
+
+We might want to rethink this a bit, as the terms now use n-ary contractinos everywhere, as opposed to the binary and nullary ones used in the inference rules.
 
 Translate derivations from the standard system in natural deduction in seqeunt style with explicit structural rules, into open deduction. Add rules that make contraction and weakening atomic.
 
@@ -59,6 +204,18 @@ Translate derivations from the standard system in natural deduction in seqeunt s
 \end{definition}
 
 We consider formulae modulo associativity and commutativity of conjunction, and we take $\top$ to be the unit for conjunction.
+
+\subsubsection{Projections of Formulae}
+
+\begin{definition}
+	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
+	\begin{itemize}
+		\item $\pi_1(\top)=\pi_2(\top)=\top$;
+		\item $\pi_1(a)=\pi_2(a)=a$;
+		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
+		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
+	\end{itemize}
+\end{definition}
 
 \subsection{Inference Rules}
 
@@ -111,19 +268,11 @@ A\;\;\rightarrow\;\;\vlder{ }{ }{C}{B}
 
 When we compose derivations vertically, we consider conjunctions to be associate, commutative, and have unit $\top$.
 
-\subsubsection{Projections of Formulae}
-
-\begin{definition}
-	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
-	\begin{itemize}
-		\item $\pi_1(\top)=\pi_2(\top)=\top$;
-		\item $\pi_1(a)=\pi_2(a)=a$;
-		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
-		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
-	\end{itemize}
-\end{definition}
+\end{document}
 
 \section{Flows}
+
+We might want to do this in a separate paper, where we have decomposed the application rules further, so that we'll get optimal reduction and a closer correspondence to the flow rewriting system.
 
 Extract the flows from the derivation in the standard way, with the added restriciton that we distinguish between the left- and the right-hand side of the contraction.
 
@@ -164,212 +313,6 @@ This is very similar to somthing Ugo dal Lago told me about (the notion of path)
 \vcenter{\hbox{\includegraphics{Figures/flow-weak-cont}}}
 \]
 
-\section{Terms}
-
-\newcommand{\FV}{{\mathop{\mathsf{FV}}}}
-\newcommand{\Var}{{\mathop{\mathsf{Var}}}}
-\newcommand{\terpair}[2]{{\langle{#1},{#2}\rangle}}
-\newcommand{\terdel}[1]{{[\leftarrow{#1}]}}
-\newcommand{\terdup}[3]{{[{#1},{#2}\leftarrow{#3}]}}
-
-\begin{itemize}
-	\item $x$;
-	\item $\lambda x.u$, where $x\in\FV(u)$;
-	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
-	\item $u\terdel{t}$, where $\Var(u)\cap\Var(t)=\emptyset$;
-	\item $u\terdup{x}{y}{t}$, where $\Var(u)\cap\Var(t)=\emptyset, x,y\in\FV(u)$;
-	\item $\epsilon$; and
-	\item $\terpair{u}{v}$ where $\Var(u)\cap\Var(t)=\emptyset$.
-\end{itemize}
-
-\subsection{Projection of Terms}
-
-\begin{definition}
-	The first (resp., second) projection of a term, $t$, is denoted $\pi_1(t)$ (resp., $\pi_2(t)$), and is defined as follows
-	\begin{itemize}
-		\item $\pi_1(\epsilon)=\pi_2(\epsilon)=\epsilon$;
-		\item $\pi_1(x)=\pi_2(x)=x$;
-		\item $\pi_1(\terpair{u}{v})=u\terdel{v}$ (resp., $\pi_2(\terpair{u}{v})=v\terdel{u}$);
-		\item $\pi_1(\lambda x.u)=\lambda x.\pi_1(u)$ (resp., $\pi_2(\lambda x.u)=\lambda x.\pi_2(u)$); and
-		\item $\pi_1( (u)v)=(\pi_1(u))\pi_1(v)$ (resp., $\pi_2( (u)v)=(\pi_2(u))\pi_2(v)$).
-	\end{itemize}
-\end{definition}
-
-\begin{lemma}
-For every term $t$, $\FV(t)=\FV(\pi_1(t))=\FV(\pi_2(t))$.
-\end{lemma}
-
-\subsection{Denotation}
-
-\newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
-
-\begin{definition}
-	The denotation of a term $t$, is written $\terden{t}$, and is defined as follows
-	\begin{itemize}
-		\item $\terden{x}=x$;
-		\item $\terden{\lambda x. u}=\lambda x.\terden{u}$;
-		\item $\terden{(u)v}=(\terden{u})\terden{v}$;
-		\item $\terden{u\terdel{v}}=\terden{u}$; and
-		\item $\terden{u\terdup{x}{y}{v}}=\terden{u}\{x\leftarrow \terden{\pi_1(v)},y\leftarrow\terden{\pi_2(v)}\}$.
-\end{itemize}
-\end{definition}
-
-Note that the denotation is not defined for all terms.
-
-\begin{lemma}
-	$\terden{u\{x\leftarrow t\}}=\terden{u}\{x\leftarrow\terden{t}\}$.
-\end{lemma}
-
-\subsection{Typing}
-
-As before. For every typing derivation, there is a term.
-
-\subsection{Reductions}
-
-\subsubsection{$\beta$-reduction}
-
-\[
-(\lambda x.u)t \rightsquigarrow_\beta u\{x\leftarrow t\}
-\]
-
-
-\begin{lemma}
-	If $u\rightsquigarrow_\beta v$, then $\terden{u}\rightsquigarrow_\beta\terden{v}$
-\end{lemma}
-
-\begin{proof}
-	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
-	\[
-	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow t\}}\;,
-	\]
-	as required.
-\end{proof}
-
-\subsubsection{Deletion}
-
-\newcommand{\tempty}{{\mathtt{empty}}}
-
-\begin{definition}
-	The set of $\tempty$ terms is defined as
-	\[\tempty:=\epsilon\;|\;\tempty\terdel{t}\;|\;\tempty\terdup{x}{y}{t}\;.\]
-\end{definition}
-
-\paragraph{Abstraction Reductions}
-
-\begin{itemize}
-	\item $u\terdel{\lambda x.t}\rightsquigarrow u\terdel{\lambda x.\epsilon\terdel{t}}$, if $t\not\in\tempty$; and
-% the following should be among the equations
-% \item $u\terdel{\lambda x.(u\terdel{t})}\rightsquigarrow u\terdel{(\lambda x.u)}\terdel{t}$, if $x\not\in\FV(t)$; and
-	\item $u\terdel{(\lambda x.\epsilon\terdel{x})}\rightsquigarrow u$.
-\end{itemize}
-
-\paragraph{Substitution Reductions}
-
-\begin{itemize}
-	\item $u\terdel{t\terdel{v}}\rightsquigarrow u\terdel{t}\terdel{v}$;
-	\item $u\terdel{t\terdup{x}{y}{v}}\rightsquigarrow u\terdel{t}\terdup{x}{y}{v}$; and
-	\item $u\terdel{x}\terdup{x}{y}{t}\rightsquigarrow u\{y\leftarrow t\}$.
-\end{itemize}
-
-\paragraph{Pair and Empty Reductions}
-
-\begin{itemize}
-	\item $u\terdel{\epsilon}\rightsquigarrow u$; and
-	\item $u\terdel{\terpair{t_1}{t_2}}\rightsquigarrow u\terdel{t_1}\terdel{t_2}$.
-\end{itemize}
-
-\begin{definition}
-	The \emph{weight} of a deletion, $u\terdel{t}$, (resp, of a duplication, $u\terdup{x}{y}{t}$) in a term $v$ is defined to be the \emph{size} of $t$ in $v$, $|t|_v$:
-	\begin{itemize}
-		\item $|w|_v$, if $t$ is $w\terdel{w'}$ (resp., $w\terdup{x}{y}{w'}$);
-		\item $1+|w|_v$, if $t$ is $\lambda x.w$;
-		\item $|w|_v$, if $t$ is a variable bound by a duplication of $w$ in $v$;
-		\item $0$, if $t$ is any otehr variable;
-		\item $0$, if $t$ is an application;
-		\item $1$, if $t$ is $\epsilon$; or
-		\item $|w|_v+|w'|_v$ (resp., 1), if $t$ is $\terpair{w}{w'}$.
-	\end{itemize}
-\end{definition}
-
-\begin{lemma}
-The deletion reductions are strongly normalising.
-\end{lemma}
-
-\begin{proof}
-Each deletion reduction rule replaces a deletion by zero or more of lower weight.
-\end{proof}
-
-\begin{lemma}
-\[
-u\terdel{t}\rightsquigarrow^\star u\terdel{(v_1)w_1}\cdots\terdel{(v_m)w_m}\terdel{x_1}\cdots\terdel{x_n}.
-\]
-\end{lemma}
-
-\subsubsection{Duplication}
-
-\newcommand{\tpair}{{\mathtt{pair}}}
-
-\begin{definition}
-	The set of $\tpair$ terms is defined as
-	\[\tpair:=\terpair{u}{v}\;|\;\tpair\terdel{t}\;|\;\tpair\terdup{x}{y}{t}\;.\]
-\end{definition}
-
-\paragraph{Abstraction Reductions}
-
-\begin{itemize}
-	\item $u\terdup{z_1}{z_2}{\lambda y.t}\rightsquigarrow u\terdup{z_1}{z_2}{\lambda y.\terpair{x_1}{x_2}\terdup{x_1}{x_2}{t}}$, if $t\not\in\tpair$;
-% the following should be an equation
-%\item $\lambda x.(u\terdup{y_1}{y_2}{y})\rightsquigarrow (\lambda x.u)\terdup{y_1}{y_2}{y}$, if $x\neq y$;
-	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdup{y_1}{y_2}{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y_1.t_1,x_2\leftarrow\lambda y_2.t_2\}$, where $y_1\in\FV(t_1)$ and $y_2\in\FV(t_2)$; and
-	\item $u\terdup{x_1}{x_2}{(\lambda y.\terpair{t_1}{t_2}\terdel{y})}\rightsquigarrow u\{x_1\leftarrow\lambda y.t_1\terdel{y},x_2\lambda y.t_2\terdel{y}\}$.
-\end{itemize}
-
-\paragraph{Substitution Reductions}
-
-\begin{itemize}
-	\item $u\terdup{x}{y}{t\terdel{v}}\rightsquigarrow u\terdup{x}{y}{t}\terdel{v}$; and
-	\item $u\terdup{x_1}{x_2}{t\terdup{y_1}{y_2}{z}}\rightsquigarrow u\terdup{x_1}{x_2}{t}\terdup{y_1}{y_2}{z}$.
-\end{itemize}
-
-\paragraph{Pair and Empty Reductions}
-
-\begin{itemize}
-	\item $u\terdup{x}{y}{\epsilon}\rightsquigarrow\{x\rightarrow\epsilon,y\rightarrow\epsilon\}$; and
-	\item $u\terdup{x}{y}{\terpair{t_1}{t_2}}\rightsquigarrow u\{x\leftarrow t_1,y\leftarrow t_2\}$.
-\end{itemize}
-
-\begin{lemma}
-	For any two terms $u$ and $v$, such that $u\rightsquigarrow v$, we have that $\FV(u)=\FV(v)$.
-\end{lemma}
-
-\begin{lemma}
-	The deletion and duplication reductions are strongly normalising.
-\end{lemma}
-
-\begin{lemma}
-	$u\terdup{x}{y}{t}\rightsquigarrow^\star u\{x\rightarrow t',y\rightarrow t''\}\terdup{x_1}{y_1}{(v_1)w_1}\cdots\terdup{x_m}{y_m}{(v_m)w_m}\terdup{x_{m+1}}{y_{m+1}}{z_{m+1}}\cdots\terdup{x_n}{y_n}{z_n}=terdel{z_{n+1}}\cdots\terdel{z_p}$,
-where $t'$ (resp., $t''$) is obtained from $\pi_1(t)$ (resp., $\pi_2(t)$) by replacing every free variable $z_{m+1},\dots,z_n$ with $x_{m+1},\dots,x_n$ (resp., $y_{m+1},\dots,y_n$) and every application $(v_1)w_1,\dots,(v_m)w_m$ with $x_1,\dots,x_m$ (resp., $y_1,\dots,y_m$).
-\end{lemma}
-
-\begin{lemma}
-	If $u\rightsquigarrow v$, then $\terden{u}=\terden{v}$.
-\end{lemma}
-
-\begin{proof}
-	The theorem follows trivially for the deletion reductions, as $\terden{u\terdel{v}}=\terden{u}$.
-
-	The casees for the duplication reductions follows by a straight-forward case analysis.
-\end{proof}
-
-\begin{theorem}
-	If\/ $\terden{u}\rightsquigarrow_\beta\terden{v}$, then $u'\rightsquigarrow_\beta v'$, where $\terden{u'}=\terden{u}$ and $\terden{v}=\terden{v'}$.
-\end{theorem}
-
-\begin{proof}
-	Let $u'$ be the normal form of $u$ with respect to the deletion and duplication reductions. It is straight-forward to verify by a case-analysis that $u'$ contains the same $\beta$-redex as $\terden{u'}$, so $v'$ is the corresponding contractum.
-\end{proof}
-
-
 \section{Flows and Terms}
 
 We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
@@ -377,7 +320,7 @@ We associate every well-typed term with a flow in the obvious way, and show the 
 \newcommand{\fl}{{\mathop{\mathsf{fl}}}}
 
 \begin{definition}
-	The flow of any well-typed term $t$, denoted $\fl(t)$, is the flow of the corresponding tying derivation.
+	The flow of any well-typed term $t$, denoted $\fl(t)$, is the flow of the corresponding typing derivation.
 \end{definition}
 
 \begin{theorem}
@@ -389,5 +332,3 @@ We associate every well-typed term with a flow in the obvious way, and show the 
 \end{theorem}
 
 We extend the correspondence to terms that can not be typed and see what happens.
-
-\end{document}
