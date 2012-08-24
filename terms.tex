@@ -222,7 +222,9 @@ The reduction $\rightsquigarrow$ is strongly normalizing.
 PSN.
 \end{theorem}
 
-\end{document}
+\section{Types}
+
+We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-formulae built from atoms and implications. We denote by upper-case greek letters $\Gamma$ and $\Delta$ meta-formulae built from object-formulae and conjunctions.
 
 \subsection{Inference Rules}
 
@@ -235,107 +237,39 @@ PSN.
 \]
 
 \[
-\vlinf{}{}{\top}{a}
+\vlinf{}{}{\vls(A.\dots.A)}{A}
 \]
 
 \[
-\vlinf{}{}{\top}{A\rightarrow\top}
+\vlinf{}{}{\vls([A\rightarrow B_1].\dots.[A\rightarrow B_n])}{A\rightarrow\vlsbr(B_1.\dots.B_n)}
 \]
 
+\subsection{Typing Derivations}
+
+\begin{itemize}
+ \item $x$:
 \[
-\vlinf{}{}{\vls(a.a)}{a}
+  A
 \]
-
+ \item $\lambda x.t$:
 \[
-\vlinf{}{}{\vls([A\rightarrow B].[A\rightarrow C])}{A\rightarrow\vlsbr(B.C)}
+  \vlinf{}{}{A^x\vlim \vlder{}{t}{B}{\vls(A^x.\Gamma)}}{\Gamma}
 \]
-
-\subsection{Composition of Derivations}
-
+ \item $(u)v$:
 \[
-\vls(\vlder{ }{ }{C}{A}\;\;.\;\;\vlder{ }{ }{D}{B})
+  \vlinf{}{}{B}{\vls(\vlder{}{u}{A\vlim B}{\Gamma}\;\;.\;\;\vlder{}{v}{A}{\Delta})}
 \]
-
+ \item $\tershare{u}{x_1}{x_n}{v}$:
 \[
-A\;\;\rightarrow\;\;\vlder{ }{ }{C}{B}
+  \vlder{}{u}{B}{\vlsbr(\vlderivation{\vlin{}{}{\vls(A^{x_1}.\cdots.A^{x_n})}{\vlde{}{v}{A}{\vlhy{\Gamma}}}}\;\;\;.\;\;\;\Delta)}
 \]
-
+ \item $\terdist{u}{x_1}{x_n}{y}{t}$:
 \[
-\vlderivation
-{
-\vlde{ }{ }{C}
-{
-\vlde{ }{ }{B}
-{
-\vlhy{A}
-}
-}
-}
+  \vlder{}{u}{B}{\vlsbr(\vlinf{}{}{\vls((A\vlim B_1)^{x_1}.\cdots.(A\vlim B_n)^{x_n})}{\vlinf{}{}{A^y\vlim\vlder{}{t}{\vls(B_1.\cdots.B_n)}{\vls(A^y.\Gamma)}}{\Gamma}}\;\;\;\;.\;\;\;\;\Delta)}
 \]
-
-When we compose derivations vertically, we consider conjunctions to be associate, commutative, and have unit $\top$.
-
+ \item $\tertuple{t_1}{t_n}$:
+\[
+  \vlsbr(\vlder{}{t_1}{A_1}{\Gamma_1}\;\;.\;\;\cdots\;\;.\;\;\vlder{}{t_n}{A_n}{\Gamma_n})
+\]
+\end{itemize}
 \end{document}
-
-\section{Flows}
-
-We might want to do this in a separate paper, where we have decomposed the application rules further, so that we'll get optimal reduction and a closer correspondence to the flow rewriting system.
-
-Extract the flows from the derivation in the standard way, with the added restriciton that we distinguish between the left- and the right-hand side of the contraction.
-
-\subsection{Reductions}
-
-The reductions work in the standard way, with the one addition of two contractions meeting in an interaction, which are rewritten to two interactions joining up the two left-hand side edges and the two right-hand side edges, repsectivly.
-
-It should be noted that this means that our reductions always preserve paths, where a valid path is defined by keeping a stack of left/right tokens, and every time a contraction is entered from below a token is added and every time a contraction is entered from above a token is removed and the paths leaves by the edge indicated on the token.
-
-This is very similar to somthing Ugo dal Lago told me about (the notion of path), so I need to look up that paper. My guess is that they use the paths to predict the size of the normal form of a term, we will get the same, but more explicitly.
-
-\[
-\vcenter{\hbox{\includegraphics{Figures/flow-beta-redex}}}
-\quad\rightsquigarrow_\beta\quad
-\vcenter{\hbox{\includegraphics{Figures/flow-beta}}}
-\]
-
-\[
-\vcenter{\hbox{\includegraphics{Figures/flow-cont-cont-redex}}}
-\quad\rightsquigarrow\quad
-\vcenter{\hbox{\includegraphics{Figures/flow-cont-cont}}}
-\]
-
-\[
-\vcenter{\hbox{\includegraphics{Figures/flow-cont-weak-redex}}}
-\quad\rightsquigarrow\quad
-\vcenter{\hbox{\includegraphics{Figures/flow-cont-weak}}}
-\]
-
-\[
-\vcenter{\hbox{\includegraphics{Figures/flow-weak-weak-redex}}}
-\quad\rightsquigarrow\quad
-\]
-
-\[
-\vcenter{\hbox{\includegraphics{Figures/flow-weak-cont-redex}}}
-\quad\rightsquigarrow\quad
-\vcenter{\hbox{\includegraphics{Figures/flow-weak-cont}}}
-\]
-
-\section{Flows and Terms}
-
-We associate every well-typed term with a flow in the obvious way, and show the correspondence between the two kinds of reductions.
-
-\newcommand{\fl}{{\mathop{\mathsf{fl}}}}
-
-\begin{definition}
-	The flow of any well-typed term $t$, denoted $\fl(t)$, is the flow of the corresponding typing derivation.
-\end{definition}
-
-\begin{theorem}
-	If $u\rightsquigarrow v$ (resp., $u\rightsquigarrow_\beta v$), then $\fl(u)\rightsquigarrow^\star\fl(v)$ (resp., $\fl(u)\rightsquigarrow^\star_\beta\fl(v)$).
-\end{theorem}
-
-\begin{theorem}
-	For every term $u$ and flow $\alpha$, such that $\alpha$ is the normal form of $\fl(u)$, there exists a term $v$, such that $v$ is the normal form of $u$ and $\fl(v)=\alpha$.
-\end{theorem}
-
-We extend the correspondence to terms that can not be typed and see what happens.
