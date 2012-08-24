@@ -30,6 +30,9 @@
 % Might not be needed, didn't check.
 \usepackage{amsfonts}
 
+% To get cases in equations
+\usepackage{amsmath}
+
 \title{An Atomic Term Calculus}
 \author{Tom Gundersen, Willem Heijltjes and Michel Parigot}
 
@@ -46,176 +49,180 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
 \newcommand{\FV}{{\mathop{\mathsf{FV}}}}
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
 \newcommand{\tertuple}[2]{{\langle{#1},\dots,{#2}{\rangle}}}
-\newcommand{\tershare}[4]{{{#1}[{#2},\dots,{#3}\leftarrow{#4}]}}
-\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
+\newcommand{\terauxshare}[3]{{{#1}[{#2}\leftarrow{#3}]}}
+\newcommand{\tershare}[4]{{\terauxshare{#1}{{#2},\dots,{#3}}{#4}}}
+\newcommand{\ternullshare}[2]{{\terauxshare{#1}{}{#2}}}
+\newcommand{\terbishare}[4]{{\terauxshare{#1}{{#2},{#3}}{#4}}}
+\newcommand{\terdist}[5]{{{#1}[{#2},\dots,{#3}\twoheadleftarrow{\lambda{#4}.{#5}}]}}
+\newcommand{\tersub}[3]{{{#1}\{{#2}\leftarrow{#3}\}}}
+\newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
+
+Where applicable we assume that all variables are fresh, so that we do not bother with $\alpha$-conversion.
+
+\subsection{Pre Terms}
 
 \begin{itemize}
 	\item $x$;
-	\item $\lambda x.u$, where $x\in\FV(u)$;
-	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
-	\item $\tertuple{t_1}{t_n}$, where $\Var(t_i)\cap\Var(t_j)=\emptyset$ if $i\neq j$; and
-	\item $\tershare{u}{x_1}{x_n}{t}$, where $x_1,\dots,x_n\in\FV(u)$ and $\Var(u)\cap\Var(t)=\emptyset$.
+	\item $\lambda x.u$;
+	\item $(u)t$;
+	\item $\tershare{u}{x_1}{x_n}{t}$;
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$; and
+	\item $\tertuple{t_1}{t_n}$.
 \end{itemize}
 
-\subsection{Equivalence of Terms}
+\newcommand{\mul}{{\mathop{\mathsf{mul}}}}
 
-To be typeset. We want the monoid equations on sharing and we want commutativity of independent sharings.
+The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
 
-\subsection{Projection of Terms}
+\begin{itemize}
+	\item $\mul(x)=\mul(\lambda x.u)=\mul((u)t)=1$
+	\item $\mul(\tershare{u}{x_1}{x_n}{t})=\mul(\terdist{u}{x_1}{x_n}{y}{t})=\mul(u)$; and
+	\item $\mul(\tertuple{t_1}{t_n})=n$.
+\end{itemize}
 
-\begin{definition}
-	The i-th projection of a term, $t$, is denoted $\terpr{i}{t}$ and is defined as follows
-	\begin{itemize}
-		\item $\terpr{i}{x}=x$;
-		\item $\terpr{i}{\lambda x.u}=\lambda x.\terpr{i}{u}$;
-		\item $\terpr{i}{(u)v}=(\terpr{i}{u})\terpr{i}{v}$;
-		\item $\terpr{i}{\tertuple{t_1}{t_n}}=t_i$ if $i\leq n$ and undefined otherwise; and
-		\item $\terpr{i}{\tershare{u}{x_1}{x_n}{t}}$ is undefined.
-	\end{itemize}
-\end{definition}
+\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
 
-%\begin{lemma}
-%For every term $t$, $\FV(t)=\FV(\pi_1(t))=\FV(\pi_2(t))$.
-%\end{lemma}
+The \emph{$i^{th}$ projection}, $\terpr{i}{\tertuple{t_1}{t_n}}$ of a tuple is defined to be $t_i$, as usual.
+
+\subsection{Lambda Terms}
+
+The set of $\lambda$-terms, $\Lambda$ is a subset of pre-terms, as expected:
+
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.u$; and
+	\item $(u)t$.
+\end{itemize}
+
+\subsection{Explicit Sharing Terms}
+
+The set of explicit sharing terms, $\Lambda_S$ is a subset of pre-terms restricted in the following way:
+
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.u$, where $x\in\FV(u)$ and $\mul(u)=1$;
+	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(u)=\mul(t)=1$;
+	\item $\tershare{u}{x_1}{x_n}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=1$;
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $y\in\FV(t)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=n$; and
+	\item $\tertuple{t_1}{t_n}$, where for every $i,j$ we have $\Var(t_i)\cap\Var(t_j)=\emptyset$ and $\mul(t_i)=1$,
+\end{itemize}
+Furthermore, we only consider terms of multiplicity one.
+
+\subsection{Explicit Sharing Normal Form}
+
+The set of terms of \emph{explicit sharing normal form} $\Lambda_{NS}\subset\Lambda_S$ is defined as:
+
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.\tershare{u}{x_1}{x_n}{x}$;
+	\item $(u)t$; and 
+	\item $\tershare{\tershare{u}{y_{1,1}}{y_{1,k_1}}{y_1}\cdots}{y_{p,1}}{y_{p,k_p}}{y_p}$,
+\end{itemize}
+where $u$ and $t$ are not on the form $\tershare{v}{z_1}{z_m}{w}$ and $y_1$, $\dots$, $y_p$ are not bound.
+
+In other words, a term is on explicit sharing normal form if only variables are shared, and sharing only takes place at the root of the term or immediately under the abstraction that binds the variable.
 
 \subsection{Denotation}
 
 \newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
-\newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
 
-\begin{definition}
-	The denotation of a term $t$, is written $\terden{t}$, and is defined as follows
-	\begin{itemize}
-		\item $\terden{x}=x$;
-		\item $\terden{\lambda x. u}=\lambda x.\terden{u}$;
-		\item $\terden{(u)v}=(\terden{u})\terden{v}$;
-		\item $\terden{\tertuple{t_1}{t_n}}=\tertuple{\terden{t_1}}{\terden{t_n}}$; and
-		\item $\terden{\tershare{u}{x_1}{x_n}{t}}=\terden{\tersubn{u}{x_1}{\terpr{1}{\terden{t}}}{x_n}{\terpr{i}{\terden{t}}}}$.
-\end{itemize}
-\end{definition}
+The function $\terden{-}:\Lambda\rightarrow\Lambda_S$ maps lambda terms to explicit sharing terms
 
-We need (probably?) to restrict our definition of terms so that we can show that that every term has a denotation, but that should be simple enough (currently it is not true as we can build nonsensical terms where such as $t[x,y,z <- <u,v>]$).
-
-\begin{lemma}
-	$\terden{u\{x\leftarrow t\}}=\terden{u}\{x\leftarrow\terden{t}\}$.
-\end{lemma}
-
-The rewrite $\rightsquigarrow$ will be defined later, I'm just putting the lemmas early to give a hint at what we are aiming for.
-
-\begin{lemma}
-$\forall u,v$ such that $u\rightsquigarrow v$, $\terden{u}=\terden{v}$.
-\end{lemma}
-
-\subsection{Sharing Normal Form}
-
-\begin{definition}
-A term is \emph{shared} (this is misleading, find a better term!) if it is of the form $\tershare{u}{x_1}{x_n}{t}$.
-\end{definition}
-
-\begin{definition}
-A term is on \emph{sharing normal form} if it is one of
 \begin{itemize}
-	\item $x$;
-	\item $\lambda x.(\tershare{u}{z_1}{z_n}{x})$
-	\item $(u)v$
-	\item $\tertuple{t_1}{t_n}$; and
-	\item $\tershare{\tershare{u}{x_{1,1}}{x_{1,k_1}}{x_1}\cdots}{x_{n,1}}{x_{n,k_n}}{x_n}$,
+	\item $\terden{x}=x$;
+	\item $\terden{\lambda x.u}=
+	  \begin{cases}
+	      \lambda x.\terden{u}, & \mbox{if }x\in\FV(u) \\
+	      \lambda x.\ternullshare{\terden{u}}{x}, & \mbox{otherwise}
+	  \end{cases}$; and
+	\item $\terden{(u)t}=\terbishare{\terbishare{(\terden{u'})\terden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
 \end{itemize}
-where $u,v,t_1,\dots,t_n$ are on sharing normal form and are not shared, and $\{x_{1,1},\dots,x_{1,k_1},\dots,x_{n,1},\dots,x_{n,k_n}\}\cap\{x_1,\dots,x_n\}=\emptyset.$
-\end{definition}
+where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and $u'$ (resp., $t''$) is obtained from $u$ (resp., $t$) by substituting each of the $x_i$s by $x_i'$ (resp., $x_i''$).
 
-In other words, a term is on sharing normal form if the only sharing that happens is at the outside of the term and sharing of bound variables immediately inside an abstraction.
+\newcommand{\tercoden}[1]{{\lfloor{#1}\rfloor}}
+
+The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms
+
+\begin{itemize}
+	\item $\tercoden{x}=x$;
+	\item $\tercoden{\lambda x.u}=\lambda x.\tercoden{u}$;
+	\item $\tercoden{(u)t}=(\tercoden{u})\tercoden{v}$;
+	\item $\tercoden{\tershare{u}{x_1}{x_n}{t}}=\tersubn{\tercoden{u}}{x_1}{\tercoden{t}}{x_n}{\tercoden{t}}$;
+	\item $\tercoden{\terdist{u}{x_1}{x_n}{y}{t}}=\tersubn{\tercoden{u}}{x_1}{\lambda y.\terpr{1}{\tercoden{t}}}{x_n}{\lambda y.\terpr{n}{\tercoden{t}}}$; and
+	\item $\tercoden{\tertuple{t_1}{t_n}}=\tertuple{\tercoden{t_1}}{\tercoden{t_n}}$.
+\end{itemize}
 
 \begin{lemma}
-$\forall u, \exists v$ such that $u\rightsquigarrow^\star v$ and $v$ is on sharing normal form.
+ When $\tercoden{-}$ is restricted to $\Lambda_{NS}$, then $\tercoden{\terden{-}}=\terden{\tercoden{-}}=\mathsf{id}$.
 \end{lemma}
+
+
+\section{Reductions}
 
 \subsection{$\beta$-reduction}
 
-\[
-(\lambda x.u)t \rightsquigarrow_\beta u\{x\leftarrow t\}
-\]
+We define $\beta$-reductions on pre-terms as follows:
+
+\[(\lambda x.u)t \rightsquigarrow_\beta \tersub{u}{x}{t}\;.\]
+
+One $\beta$ reduction in the lambda calculus corresponds to one $\beta$ reduction in the explicit sharing calculus, whereas one $\beta$ reduction in the explicit sharing calculus corresponds to one or more $\beta$ reductions in the lambda calculus:
 
 \begin{lemma}
-	If $u\rightsquigarrow_\beta v$, then $\terden{u}\rightsquigarrow_\beta\terden{v}$
+For any lambda terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\tercoden{u}\rightsquigarrow_\beta\tercoden{v}$.
 \end{lemma}
-
-%\begin{proof}
-%	Assume, without loss of generality, that $u=(\lambda x.w)t$. We then have that $v=w\{x\leftarrow t\}$, and that
-%	\[
-%	\terden{(\lambda x.w)t}=(\lambda x.\terden{w})\terden{t}\rightsquigarrow_\beta\terden{w}\{x\leftarrow\terden{t}\}=\terden{w\{x\leftarrow t\}}\;,
-%	\]
-%	as required.
-%\end{proof}
-
-This one is a bit ugly, find a better way to express it:
 
 \begin{lemma}
-$\forall u,v$ such that $\terden{u}\rightsquigarrow_\beta\terden{v}$ and $u,v$ are on sharing normal form, then $\exists w$ such that $u\rightsquigarrow_\beta w$ and $w\rightsquigarrow^\star v$.
+For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\terden{u}\rightsquigarrow^\star_\beta\terden{v}$
 \end{lemma}
+
+This is as we expect, as we hope to get optimality (though will not claim that in this paper).
 
 \subsection{Sharing Reductions}
 
-\subsubsection{Abstraction}
+The following reductions are designed to transform any explicit sharing term into explicit sharing normal form.
+
+\subsubsection{Sharing to the Root}
 
 \begin{itemize}
-\item $\tershare{u}{x_1}{x_n}{\lambda y. t} \rightsquigarrow
-      \tershare{u}{x_1}{x_n}{\lambda y.\tershare{\tertuple{z_1}{z_n}}{z_1}{z_n}{t}}$; and
-\item $\tershare{u}{x_1}{x_n}{\lambda y.\tershare{\tertuple{t_1}{t_n}}{z_{1,1}}{z_{n,k_n}}{y}} \rightsquigarrow$
-      \[\tershare{u}{x_1}{x_n}{\tertuple{\lambda z_1.\tershare{t_1}{z_{1,1}}{z_{1,1_k}}{z_1}}{\lambda z_n.\tershare{t_n}{z_{n,1}}{z_{n,n_k}}{z_n}}},\]
-where $\{z_{i,1},\dots,z_{i,k_i}\}\subset\FV(t_i)$.
+ \item $\lambda x.\tershare{u}{x_1}{x_n}{y}\rightsquigarrow\tershare{\lambda x.u}{x_1}{x_n}{y}$, if $x\neq y$;
+ \item \begin{itemize}
+        \item $(\tershare{u}{x_1}{x_n}{v})t\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
+        \item $(u)\tershare{t}{x_1}{x_n}{v}\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
+       \end{itemize}
+ \item $\tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}$; and
+ \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{y}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{y}$, if $y\neq z$. 
 \end{itemize}
 
-\subsubsection{Application}
+\subsubsection{Merge Sharing}
 
 \begin{itemize}
-\item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tershare{u}{x_1}{x_n}{\tertuple{(z_1)y_i}{(z_n)y_n}}}{z_1}{z_n}{v}}{y_1}{y_n}{t}$; and
-\item $(\tershare{u}{x_1}{x_n}{v})t \rightsquigarrow \tershare{(u)t}{x_1}{x_n}{v}$.
+ \item $\terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}\rightsquigarrow
+	\terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}$.
 \end{itemize}
 
-\subsubsection{Tuple}
+We might also want to add a rule to merge sharing with distribution, but it is not necessary for this paper (but might be for optimality).
+
+\subsubsection{Distribute}
 
 \begin{itemize}
-\item $\tershare{u}{x_1}{x_n}{\tertuple{t_1}{t_n}} \rightsquigarrow u\{x_1\leftarrow t_1,\dots,x_n\leftarrow t_n\}$.
+ \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$;
+ \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$; and
+ \item $\terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}\rightsquigarrow \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}$, where for every $i$ we have $\{y_{i,1},\dots,y_{i,k_i}\}\subset\FV(t_i)$.
 \end{itemize}
 
-\subsubsection{Sharing}
-\begin{itemize}
-\item $\tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}} \rightsquigarrow \tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_n}{t}$.
-\end{itemize}
+\begin{lemma}
+For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow v$, then $\terden{u}=\terden{v}$.
+\end{lemma}
 
-\section{Derivations}
+\begin{lemma}
+The reduction $\rightsquigarrow$ is strongly normalizing.
+\end{lemma}
 
-We might want to rethink this a bit, as the terms now use n-ary contractinos everywhere, as opposed to the binary and nullary ones used in the inference rules.
+\begin{theorem}
+PSN.
+\end{theorem}
 
-Translate derivations from the standard system in natural deduction in seqeunt style with explicit structural rules, into open deduction. Add rules that make contraction and weakening atomic.
-
-\subsection{Formulae}
-
-\begin{definition}
-	A  formula is defined to be
-	\begin{itemize}
-		\item the unit true: $\top$;
-		\item an atom: $a$;
-		\item a conjunction: $\vls(A.B)$; or
-		\item an implication: $A\rightarrow B$,
-	\end{itemize}
-	where no conjunction or unit may occur to the left of an implication.
-\end{definition}
-
-We consider formulae modulo associativity and commutativity of conjunction, and we take $\top$ to be the unit for conjunction.
-
-\subsubsection{Projections of Formulae}
-
-\begin{definition}
-	The first (resp., second) projection of a formula $\pi_1(A)$ (resp., $\pi_2(A)$), is defined as follows
-	\begin{itemize}
-		\item $\pi_1(\top)=\pi_2(\top)=\top$;
-		\item $\pi_1(a)=\pi_2(a)=a$;
-		\item $\pi_1(\vls(A.B))=A$ (resp., $\pi_2(\vls(A.B))=B$); and
-		\item $\pi_1(A\rightarrow B)=\pi_1(A)\rightarrow\pi_1(B)$ (resp., $\pi_2(A\rightarrow B)=\pi_2(A)\rightarrow\pi_2(B)$).
-	\end{itemize}
-\end{definition}
+\end{document}
 
 \subsection{Inference Rules}
 
