@@ -61,16 +61,16 @@ Where applicable we assume that all variables are fresh, so that we do not bothe
 
 \subsection{Pre Terms}
 
+\newcommand{\mul}{{\mathop{\mathsf{mul}}}}
+
 \begin{itemize}
 	\item $x$;
 	\item $\lambda x.u$;
 	\item $(u)t$;
 	\item $\tershare{u}{x_1}{x_n}{t}$;
-	\item $\terdist{u}{x_1}{x_n}{y}{t}$; and
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$, where $\mul(t)=n$; and
 	\item $\tertuple{t_1}{t_n}$.
 \end{itemize}
-
-\newcommand{\mul}{{\mathop{\mathsf{mul}}}}
 
 The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
 
