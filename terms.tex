@@ -184,13 +184,13 @@ The following reductions are designed to transform any explicit sharing term int
 \subsubsection{Sharing to the Root}
 
 \begin{itemize}
- \item $\lambda x.\tershare{u}{x_1}{x_n}{y}\rightsquigarrow\tershare{\lambda x.u}{x_1}{x_n}{y}$, if $x\neq y$;
+ \item $\lambda x.\tershare{u}{x_1}{x_n}{t}\rightsquigarrow\tershare{\lambda x.u}{x_1}{x_n}{t}$, if $x\not\in\FV(t)$;
  \item \begin{itemize}
         \item $(\tershare{u}{x_1}{x_n}{v})t\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
         \item $(u)\tershare{t}{x_1}{x_n}{v}\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
        \end{itemize}
  \item $\tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}$; and
- \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{y}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{y}$, if $y\neq z$. 
+ \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}$, if $z\not\in\FV(t)$.
 \end{itemize}
 
 \subsubsection{Merge Sharing}
