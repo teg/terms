@@ -1,0 +1,341 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage{concrete}
+
+\setbeamertemplate{navigation symbols}{} 
+\usecolortheme[named=Green]{structure}
+
+\usepackage[noxy,lutzsyntax]{virginialake}
+
+\title[Sharing Calculus]{An Atomic Term Calculus for Intuitionistic Logic}
+
+\author
+{
+Tom Gundersen\\
+joint work with
+\\
+Willem Heiljtjes and Michel Parigot
+}
+
+\date{University of Bath\\September 14, 2012}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\ttt}{\mathsf{t}}
+\newcommand{\fff}{\mathsf{f}}
+
+%\renewcommand{\vlhole}{\{\cdot\}}
+
+\vlupdate{\smash}
+
+\vlnosmallleftlabels
+
+\newcommand{\FV}{{\mathop{\mathsf{FV}}}}
+\newcommand{\Var}{{\mathop{\mathsf{Var}}}}
+\newcommand{\tertuple}[2]{{\langle{#1},\dots,{#2}{\rangle}}}
+\newcommand{\terauxshare}[3]
+{
+  {
+    {#1}[{#2}\leftarrow{#3}]
+  }
+}
+\newcommand{\terauxdist}[3]
+{
+  {
+    {#1}[{#2}\twoheadleftarrow{#3}]
+  }
+}
+\newcommand{\tershare}[4]
+{
+  {
+    \terauxshare
+    {#1}
+    {{#2},\dots,{#3}}
+    {#4}
+  }
+}
+\newcommand{\ternullshare}[2]{{\terauxshare{#1}{}{#2}}}
+\newcommand{\terbishare}[4]
+{
+  {
+    \terauxshare
+    {#1}
+    {{#2},{#3}}
+    {#4}
+  }
+}
+\newcommand{\terdist}[5]
+{
+  {
+    \terauxdist
+    {#1}
+    {{#2},\dots,{#3}}
+    {\lambda{#4}.{#5}}
+  }
+}
+\newcommand{\terunadist}[4]
+{
+  {
+    \terauxdist
+    {#1}
+    {#2}
+    {\lambda{#3}.{#4}}
+  }
+}
+\newcommand{\tersub}[3]{{{#1}\{{#2}\leftarrow{#3}\}}}
+\newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
+
+
+\vlupdate\frame
+
+\frame{
+\frametitle{Deep Inference and Open Deduction}
+\begin{itemize}
+ \item Inference rules are unary
+ \item There is no distinction between meta and object-level connectives
+ \item Derivations can be composed by the same connectives as formulae
+\end{itemize}
+\[
+\begin{array}{cc}
+\vlinf{}{}{B}{A}\quad\quad\quad &
+\vlder{}{}{B}{A}\\
+\quad&\quad\\
+\vls(\vlder{}{}{B}{A}\;\;.\;\;\vlder{}{}{D}{C})\quad\quad\quad &
+A\;\;\rightarrow\;\;\vlder{}{}{C}{B}
+\end{array}
+\]
+}
+
+
+\frame{
+\frametitle{Formulae}
+\begin{itemize}
+ \item Atoms are denoted by lowercase latin characters;
+ \item formulae built from atoms and implications are denoted by uppercase latin characters; and
+ \item formulae built from atoms, implications and conjunctions are denoted by uppercase greek characters.
+\end{itemize}
+\[
+\begin{array}{c@{\quad}c@{\quad}c}
+\quad&\quad&\quad\\
+A,B & ::= & a\quad |\quad A\vlim A\\
+\quad&\quad&\quad\\
+\Gamma,\Delta & ::= & A\quad |\quad \vls(\Gamma.\Gamma)
+\end{array}
+\]
+}
+
+\frame{
+\frametitle{Inference Rules}
+\[
+\begin{array}{cc}
+\vlinf{}{}{A\rightarrow\vlsbr(A.\Gamma)}{\Gamma}\quad\quad\quad &
+\vlinf{}{}{B}{\vls(A.[A\rightarrow B])}\\
+\quad&\quad\\
+\quad&\quad\\
+\vlinf{}{}{\vls(A.\cdots.A)}{A}\quad\quad\quad &
+\vlinf{}{}{\vls([A\rightarrow B_1].\cdots.[A\rightarrow B_n])}{A\rightarrow\vlsbr(B_1.\cdots.B_n)}
+\end{array}
+\]
+}
+
+\frame{
+\frametitle{Typing Derivations}
+\[
+\begin{array}{cc}
+  A^x & x:A \\
+\quad&\quad\\
+  \vlinf{}{}{A^x\vlim \vlder{}{t}{B}{\vls(A^x.\Gamma)}}{\Gamma} & \lambda x.t:A\vlim B \\
+  \vlinf{}{}{B}{\vls(\vlder{}{u}{A\vlim B}{\Gamma}\;\;.\;\;\vlder{}{v}{A}{\Delta})} & (u)v: B \\
+  \vlder{}{u}{B}{\vlsbr(\vlderivation{\vlin{}{}{\vls(A^{x_1}.\cdots.A^{x_n})}{\vlde{}{v}{A}{\vlhy{\Gamma}}}}\;\;\;.\;\;\;\Delta)} &
+    \tershare{u}{x_1}{x_n}{v}: B \\
+\end{array}
+\]
+}
+
+\frame{
+\frametitle{Typing Derivations}
+\[
+\begin{array}{cc}
+  \vlder{}{u}{B}{\vlsbr(\vlinf{}{}{\vls((A\vlim B_1)^{x_1}.\cdots.(A\vlim B_n)^{x_n})}{\vlinf{}{}{A^y\vlim\vlder{}{t}{\vls(B_1.\cdots.B_n)}{\vls(A^y.\Gamma)}}{\Gamma}}\;\;\;\;.\;\;\;\;\Delta)} &
+    \terdist{u}{x_1}{x_n}{y}{t}: B \\
+\quad&\quad\\
+\quad&\quad\\
+  \vlsbr(\vlder{}{t_1}{A_1}{\Gamma_1}\;\;.\;\;\cdots\;\;.\;\;\vlder{}{t_n}{A_n}{\Gamma_n}) &
+    \tertuple{t_1}{t_n}: \vls(A_1.\cdots.A_n)
+\end{array}
+\]
+}
+
+\frame{
+\frametitle{Pre Terms}
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.u$;
+	\item $(u)t$;
+	\item $\tershare{u}{x_1}{x_n}{t}$;
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$; and
+	\item $\tertuple{t_1}{t_n}$.
+\end{itemize}
+}
+
+\newcommand{\mul}{{\mathop{\mathsf{mul}}}}
+
+\frame{
+\frametitle{Multiplicity of Terms}
+The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
+\begin{itemize}
+	\item $\mul(x)=\mul(\lambda x.u)=\mul((u)t)=1$
+	\item $\mul(\tershare{u}{x_1}{x_n}{t})=\mul(\terdist{u}{x_1}{x_n}{y}{t})=\mul(u)$; and
+	\item $\mul(\tertuple{t_1}{t_n})=n$.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Explicit Sharing Calculus}
+The set of explicit sharing terms, $\Lambda_S$ is a subset of pre-terms restricted in the following way:
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.u$, where $x\in\FV(u)$ and $\mul(u)=1$;
+	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(u)=\mul(t)=1$;
+	\item $\tershare{u}{x_1}{x_n}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=1$;
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$, where $\mul(t)=n$, $\{x_1,\dots,x_n\}\subset\FV(u)$, $y\in\FV(t)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=n$; and
+	\item $\tertuple{t_1}{t_n}$, where for every $i,j$ we have $\Var(t_i)\cap\Var(t_j)=\emptyset$ and $\mul(t_i)=1$,
+\end{itemize}
+}
+
+\frame{
+\frametitle{Quotient of Terms}
+We consider explicit sharing terms equal modulo the following equation:
+\begin{itemize}
+ \item $\terauxshare{u}{x}{t}=\terauxdist{u}{x}{t}=u\{x\leftarrow t\}$;
+ \item $\tershare{\tershare{u}{x_1}{x_n}{t}}{y_1}{y_m}{v}=\tershare{\tershare{u}{y_1}{y_m}{v}}{x_1}{x_n}{t}$;
+ \item $\tershare{\terdist{u}{x_1}{x_n}{x}{t}}{y_1}{y_m}{v}=\terdist{\tershare{u}{y_1}{y_m}{v}}{x_1}{x_n}{x}{t}$; and
+ \item $\terdist{\terdist{u}{x_1}{x_n}{x}{t}}{y_1}{y_m}{y}{v}=\terdist{\terdist{u}{y_1}{y_m}{y}{v}}{x_1}{x_n}{x}{t}$,
+\end{itemize}
+if $x_1$, $\dots$, $x_n$ $\not\in\FV(v)$ and $y_1$, $\dots$, $y_m$ $\not\in\FV(t)$.
+}
+
+\newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
+
+\frame{
+\frametitle{Denotation}
+The function $\terden{-}:\Lambda\rightarrow\Lambda_S$ maps lambda terms to explicit sharing terms
+\begin{itemize}
+	\item $\terden{x}=x$;
+	\item $\terden{\lambda x.u}=
+	  \begin{cases}
+	      \lambda x.\terden{u}, & \mbox{if }x\in\FV(u) \\
+	      \lambda x.\ternullshare{\terden{u}}{x}, & \mbox{otherwise}
+	  \end{cases}$; and
+	\item $\terden{(u)t}=\terbishare{\terbishare{(\terden{u'})\terden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
+\end{itemize}
+where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and $u'$ (resp., $t''$) is obtained from $u$ (resp., $t$) by substituting each of the $x_i$s by $x_i'$ (resp., $x_i''$).
+}
+
+
+\newcommand{\tercoden}[1]{{\lfloor{#1}\rfloor}}
+\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
+
+\frame{
+\frametitle{Denotation}
+The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms
+\begin{itemize}
+	\item $\tercoden{x}=x$;
+	\item $\tercoden{\lambda x.u}=\lambda x.\tercoden{u}$;
+	\item $\tercoden{(u)t}=(\tercoden{u})\tercoden{v}$;
+	\item $\tercoden{\tershare{u}{x_1}{x_n}{t}}=\tersubn{\tercoden{u}}{x_1}{\tercoden{t}}{x_n}{\tercoden{t}}$;
+	\item $\tercoden{\terdist{u}{x_1}{x_n}{y}{t}}=\tersubn{\tercoden{u}}{x_1}{\lambda y.\terpr{1}{\tercoden{t}}}{x_n}{\lambda y.\terpr{n}{\tercoden{t}}}$; and
+ 	\item $\tercoden{\tertuple{t_1}{t_n}}=\tertuple{\tercoden{t_1}}{\tercoden{t_n}}$,
+\end{itemize}
+where the \emph{$i^{th}$ projection}, $\terpr{i}{\tertuple{t_1}{t_n}}$ of a tuple is defined to be $t_i$, as usual.
+}
+
+\frame{
+\begin{lemma}
+$\tercoden{\terden{-}}=\mathsf{id}$.
+\end{lemma}
+}
+
+\frame{
+\frametitle{Explicit Sharing Normal Form}
+The set of terms of \emph{explicit sharing normal form} $\Lambda_{NS}\subset\Lambda_S$ is defined as:
+\begin{itemize}
+	\item $x$;
+	\item $\lambda x.\tershare{u}{x_1}{x_n}{x}$;
+	\item $(u)t$; and 
+	\item $\tershare{\tershare{u}{y_{1,1}}{y_{1,k_1}}{y_1}\cdots}{y_{p,1}}{y_{p,k_p}}{y_p}$,
+\end{itemize}
+where $u$ and $t$ are not on the form $\tershare{v}{z_1}{z_m}{w}$ and $y_1$, $\dots$, $y_p$ are not bound.
+}
+
+\frame{
+$\Lambda$ is isomorphic to $\Lambda_{NS}$:
+\begin{lemma}
+ When $\tercoden{-}$ is restricted to $\Lambda_{NS}$, then $\terden{\tercoden{-}}=\mathsf{id}$.
+\end{lemma}
+}
+
+\frame{
+\frametitle{$\beta$-reduction}
+\[(\lambda x.u)t \rightsquigarrow_\beta \tersub{u}{x}{t}\;.\]
+\begin{lemma}
+For any lambda terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\tercoden{u}\rightsquigarrow_\beta\tercoden{v}$.
+\end{lemma}
+\begin{lemma}
+For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\terden{u}\rightsquigarrow^\star_\beta\terden{v}$
+\end{lemma}
+}
+
+\frame{
+\frametitle{Reductions: Sharing to the Root}
+\begin{itemize}
+ \item $\lambda x.\tershare{u}{x_1}{x_n}{t}\rightsquigarrow\tershare{\lambda x.u}{x_1}{x_n}{t}$, if $x\not\in\FV(t)$;
+ \item \begin{itemize}
+        \item $(\tershare{u}{x_1}{x_n}{v})t\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
+        \item $(u)\tershare{t}{x_1}{x_n}{v}\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
+       \end{itemize}
+ \item $\tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}$; and
+ \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}$, if $z\not\in\FV(t)$.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Reductions: Merge Sharing}
+\begin{itemize}
+ \item $\terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}\rightsquigarrow
+	\terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}$.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Reductions: Distribute}
+\begin{itemize}
+ \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$;
+ \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$; and
+ \item $\terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}\rightsquigarrow \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}$, where for every $i$ we have $\{y_{i,1},\dots,y_{i,k_i}\}\subset\FV(t_i)$.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Preservation of Strong Normalisation}
+\begin{lemma}
+For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow v$, then $\terden{u}=\terden{v}$.
+\end{lemma}
+\begin{lemma}
+The reduction $\rightsquigarrow$ is strongly normalizing.
+\end{lemma}
+\begin{theorem}
+For any strongly normalizing $\lambda$-term $u$ under $\beta$-reduction, $\tercoden{u}$ is strongly normalizing under $\{\rightsquigarrow_\beta,\rightsquigarrow\}$-reduction.
+\end{theorem}
+}
+
+\end{document}
