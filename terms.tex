@@ -49,11 +49,55 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
 \newcommand{\FV}{{\mathop{\mathsf{FV}}}}
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
 \newcommand{\tertuple}[2]{{\langle{#1},\dots,{#2}{\rangle}}}
-\newcommand{\terauxshare}[3]{{{#1}[{#2}\leftarrow{#3}]}}
-\newcommand{\tershare}[4]{{\terauxshare{#1}{{#2},\dots,{#3}}{#4}}}
+\newcommand{\terauxshare}[3]
+{
+  {
+    {#1}[{#2}\leftarrow{#3}]
+  }
+}
+\newcommand{\terauxdist}[3]
+{
+  {
+    {#1}[{#2}\twoheadleftarrow{#3}]
+  }
+}
+\newcommand{\tershare}[4]
+{
+  {
+    \terauxshare
+    {#1}
+    {{#2},\dots,{#3}}
+    {#4}
+  }
+}
 \newcommand{\ternullshare}[2]{{\terauxshare{#1}{}{#2}}}
-\newcommand{\terbishare}[4]{{\terauxshare{#1}{{#2},{#3}}{#4}}}
-\newcommand{\terdist}[5]{{{#1}[{#2},\dots,{#3}\twoheadleftarrow{\lambda{#4}.{#5}}]}}
+\newcommand{\terbishare}[4]
+{
+  {
+    \terauxshare
+    {#1}
+    {{#2},{#3}}
+    {#4}
+  }
+}
+\newcommand{\terdist}[5]
+{
+  {
+    \terauxdist
+    {#1}
+    {{#2},\dots,{#3}}
+    {\lambda{#4}.{#5}}
+  }
+}
+\newcommand{\terunadist}[4]
+{
+  {
+    \terauxdist
+    {#1}
+    {#2}
+    {\lambda{#3}.{#4}}
+  }
+}
 \newcommand{\tersub}[3]{{{#1}\{{#2}\leftarrow{#3}\}}}
 \newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
 
