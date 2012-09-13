@@ -229,7 +229,13 @@ The following reductions are designed to transform any explicit sharing term int
 
 We consider terms equal modulo the following equation:
 
-TBD
+\begin{itemize}
+ \item $\terauxshare{u}{x}{t}=\terauxdist{u}{x}{t}=u\{x\leftarrow t\}$;
+ \item $\tershare{\tershare{u}{x_1}{x_n}{t}}{y_1}{y_m}{v}=\tershare{\tershare{u}{y_1}{y_m}{v}}{x_1}{x_n}{t}$;
+ \item $\tershare{\terdist{u}{x_1}{x_n}{x}{t}}{y_1}{y_m}{v}=\terdist{\tershare{u}{y_1}{y_m}{v}}{x_1}{x_n}{x}{t}$; and
+ \item $\terdist{\terdist{u}{x_1}{x_n}{x}{t}}{y_1}{y_m}{y}{v}=\terdist{\terdist{u}{y_1}{y_m}{y}{v}}{x_1}{x_n}{x}{t}$,
+\end{itemize}
+if $x_1$, $\dots$, $x_n$ $\not\in\FV(v)$ and $y_1$, $\dots$, $y_m$ $\not\in\FV(t)$.
 
 \subsubsection{Sharing to the Root}
 
