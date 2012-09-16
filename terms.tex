@@ -48,8 +48,14 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
 
 \newcommand{\FV}{{\mathop{\mathsf{FV}}}}
 \newcommand{\Var}{{\mathop{\mathsf{Var}}}}
-\newcommand{\tertuple}[2]{{\langle{#1},\dots,{#2}{\rangle}}}
+% auxilliary macros
 \newcommand{\terauxshare}[3]
+{
+  {
+    {#1}[{#2}\leftarrow{#3}]
+  }
+}
+\newcommand{\typeauxshare}[3]
 {
   {
     {#1}[{#2}\leftarrow{#3}]
@@ -61,6 +67,21 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
     {#1}[{#2}\twoheadleftarrow{#3}]
   }
 }
+
+
+% terms
+\newcommand{\tervar}[1]
+{
+  {#1}
+}
+\newcommand{\terabs}[2]
+{
+  {\lambda{#1}.{#2}}
+}
+\newcommand{\terapp}[2]
+{
+  {({#1}){#2}}
+}
 \newcommand{\tershare}[4]
 {
   {
@@ -70,14 +91,12 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
     {#4}
   }
 }
-\newcommand{\ternullshare}[2]{{\terauxshare{#1}{}{#2}}}
-\newcommand{\terbishare}[4]
+\newcommand{\tertuple}[2]
 {
   {
-    \terauxshare
-    {#1}
-    {{#2},{#3}}
-    {#4}
+    {\langle}
+    {#1},\dots,{#2}
+    {\rangle}
   }
 }
 \newcommand{\terdist}[5]
@@ -89,6 +108,92 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
     {\lambda{#4}.{#5}}
   }
 }
+\newcommand{\tersub}[3]
+{
+  {
+    {#1}\{{#2}/{#3}\}
+  }
+}
+
+% types
+\newcommand{\typetuple}[6] % 1: free vars of first term, 2: first term, 3: type of first term, 4: free vars of last term, 5: last term, 6: type of last term, 
+{
+  {
+    \vliiinf{}{}
+    {{#1},\dots,{#4}\vdash\tertuple{#2}{#5}:\vls({#3}.\cdots.{#6})}
+    {{#1}\vdash{#2}:{#3}}
+    {\cdots}
+    {{#4}\vdash{#5}:{#6}}
+  }
+}
+\newcommand{\typevar}[2] % var, type of var
+{
+  {
+    \vlinf{}{}{{#1}:{#2}\vdash{#1}:{#2}}{}
+  }
+}
+\newcommand{\typeabs}[5] % free vars, bound var, type of bound var, body, type of body
+{
+  {
+    \vlinf{}{}{{#1}\vdash\terabs{#2}{#4}:{#3}\vlim{#5}}{{#1},{#2}:{#3}\vdash{#4}:{#5}}
+  }
+}
+\newcommand{\typeapp}[6] % free vars of function, function, type of body of function, free vars of argument, argument, type of argument
+{
+  {
+    \vliinf{}{}
+    {
+      {#1},{#4}\vdash({#2}){#5}:{#3}
+    }
+    {
+      {#1}\vdash{#2}:{#6}\vlim{#3}
+    }
+    {
+      {#4}\vdash{#5}:{#6}
+    }
+  }
+}
+\newcommand{\typeshare}[8] % free vars of body, body, type of body, first var, last var, free vars of shared term, shared term, type of shared term
+{
+  {
+    \vliinf{}{}
+    {{#1},{#6}\vdash\tershare{#2}{#4}{#5}{#7}:{#3}}
+    {{#1},{#4}:{#8},\dots,{#5}:{#8}\vdash{#2}:{#3}}
+    {{#6}\vdash{#7}:{#8}}
+  }
+}
+\newcommand{\typedist}[3] % 1:free vars of body, 2:body, 3:type of body, 4:first var, 5:last var, 6:free vars of dist term, 7:dist term var, 8:type of dist term var, 9:dist term body, 10:type of first projection of dist term body, 11:type of last projection of dist term body
+{
+  \def\argOne{{#1}}
+  \def\argTwo{{#2}}
+  \def\argThree{{#3}}
+  \typedistRelay
+}
+\def\typedistRelay#1#2#3#4#5#6#7#8
+{
+  \vliinf{}{}
+  {{\argOne},{#3}\vdash\terdist{\argTwo}{#1}{#2}{#4}{#6}:{\argThree}}
+  {{\argOne},{#1}:{#5}\vlim{#7},\dots,{#2}:{#5}\vlim{#8}\vdash{\argTwo}:{\argThree}}
+  {{#3},{#4}:{#5}\vdash{#6}:\vlsbr({#7}.\cdots.{#8})}
+}
+% \newcommand{\tersub}[3]
+% {
+%   {
+%     {#1}\{{#2}/{#3}\}
+%   }
+% }
+
+% special cases
+\newcommand{\ternullshare}[2]{{\terauxshare{#1}{}{#2}}}
+\newcommand{\terbishare}[4]
+{
+  {
+    \terauxshare
+    {#1}
+    {{#2},{#3}}
+    {#4}
+  }
+}
 \newcommand{\terunadist}[4]
 {
   {
@@ -98,7 +203,6 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
     {\lambda{#3}.{#4}}
   }
 }
-\newcommand{\tersub}[3]{{{#1}\{{#2}\leftarrow{#3}\}}}
 \newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
 
 Where applicable we assume that all variables are fresh, so that we do not bother with $\alpha$-conversion.
@@ -301,31 +405,24 @@ We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-fo
 \]
 
 \subsection{Typing Derivations}
+\[
+\typevar{x}{A}
+\]
+\[
+\typeabs{\overrightarrow x:\Gamma}{x}{A}{t}{B}
+\]
+\[
+\typeapp{\overrightarrow x:\Gamma}{u}{B}{\overrightarrow y:\Delta}{v}{A}
+\]
+\[
+\typeshare{\overrightarrow x:\Gamma}{u}{A}{x_1}{x_n}{\overrightarrow y:\Delta}{v}{B}
+\]
+\[
+ % 1:free vars of body, 2:body, 3:type of body, 4:first var, 5:last var, 6:free vars of dist term, 7:dist term var, 8:type of dist term var, 9:dist term body, 10:type of first projection of dist term body, 11:type of last projection of dist term body
+  \typedist{\overrightarrow x:\Gamma}{u}{A}{x_1}{x_n}{\overrightarrow y:\Delta}{z}{B}{t}{C_1}{C_n}{} \\
+\]
+\[
+\typetuple{\Gamma_1}{t_1}{A_1}{\Gamma_n}{t_n}{A_n}
+\]
 
-\begin{itemize}
- \item $x$:
-\[
-  A^x
-\]
- \item $\lambda x.t$:
-\[
-  \vlinf{}{}{A^x\vlim \vlder{}{t}{B}{\vls(A^x.\Gamma)}}{\Gamma}
-\]
- \item $(u)v$:
-\[
-  \vlinf{}{}{B}{\vls(\vlder{}{u}{A\vlim B}{\Gamma}\;\;.\;\;\vlder{}{v}{A}{\Delta})}
-\]
- \item $\tershare{u}{x_1}{x_n}{v}$:
-\[
-  \vlder{}{u}{B}{\vlsbr(\vlderivation{\vlin{}{}{\vls(A^{x_1}.\cdots.A^{x_n})}{\vlde{}{v}{A}{\vlhy{\Gamma}}}}\;\;\;.\;\;\;\Delta)}
-\]
- \item $\terdist{u}{x_1}{x_n}{y}{t}$:
-\[
-  \vlder{}{u}{B}{\vlsbr(\vlinf{}{}{\vls((A\vlim B_1)^{x_1}.\cdots.(A\vlim B_n)^{x_n})}{\vlinf{}{}{A^y\vlim\vlder{}{t}{\vls(B_1.\cdots.B_n)}{\vls(A^y.\Gamma)}}{\Gamma}}\;\;\;\;.\;\;\;\;\Delta)}
-\]
- \item $\tertuple{t_1}{t_n}$:
-\[
-  \vlsbr(\vlder{}{t_1}{A_1}{\Gamma_1}\;\;.\;\;\cdots\;\;.\;\;\vlder{}{t_n}{A_n}{\Gamma_n})
-\]
-\end{itemize}
 \end{document}
