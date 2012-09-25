@@ -422,4 +422,161 @@ We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-fo
 \typetuple{\Gamma_1}{t_1}{A_1}{\Gamma_n}{t_n}{A_n}
 \]
 
+\begin{theorem}
+Every reduction preserves typing.
+\end{theorem}
+
+\begin{proof}
+\[
+\begin{array}{c@{\quad}c@{\quad}c}
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terapp{\terabs{x}{u}}{t}: B}
+    {
+      \vlin{}{}
+      {\overrightarrow x: \Gamma \vdash \terabs{x}{u}:A\vlim B}
+      {\vlhy{\overrightarrow x: \Gamma, x: A \vdash u: B}}
+    }
+    {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
+  }
+&
+\rightsquigarrow_\beta
+&
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tersub{u}{x}{t}: B}
+    {\vlhy{\overrightarrow x: \Gamma, x: A \vdash u: B}}
+    {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
+  }
+\\
+\\
+  \vlderivation
+  {
+    \vlin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terabs{x}{(\tershare{u}{x_1}{x_n}{t})}: A\vlim B}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, x: A \vdash \tershare{u}{x_1}{x_n}{t}: B}
+      {\vlhy{\overrightarrow x: \Gamma, x: A, x_1: C, \dots, x_n: C \vdash u: B}}
+      {\vlhy{\overrightarrow y: \Delta \vdash t: C}}
+    }
+  }
+&
+\rightsquigarrow
+&
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{(\terabs{x}{u})}{x_1}{x_n}{t}: A\vlim B}
+    {
+      \vlin{}{}
+      {\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash \terabs{x}{u}: A\vlim B}
+      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C, x: A \vdash u: B}}
+    }
+    {\vlhy{\overrightarrow y: \Delta \vdash t: C}}
+  }
+\\
+\\
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \terapp{\tershare{u}{x_1}{x_n}{v}}t: B}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{u}{x_1}{x_n}{v}: A\vlim B}
+      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
+      {\vlhy{\overrightarrow y: \Delta \vdash v: C}}
+    }
+    {\vlhy{\overrightarrow z: \Sigma \vdash t: A}}
+  }
+&
+\rightsquigarrow
+&
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{(\terapp{u}t)}{x_1}{x_n}{v}: B}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow z: \Sigma, x_1:C, \dots, x_n: C \vdash \terapp{u}{t}: B}
+      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
+      {\vlhy{\overrightarrow z: \Sigma \vdash t: A}}
+    }
+    {\vlhy{\overrightarrow y: \Delta \vdash v: C}}
+  }
+\\
+\\
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \terapp{u}{\tershare{t}{x_1}{x_n}{v}}: B}
+    {\vlhy{\overrightarrow x: \Gamma \vdash u: A\vlim B}}
+    {
+      \vliin{}{}
+      {\overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{t}{x_1}{x_n}{v}: A}
+      {\vlhy{\overrightarrow y: \Delta, x_1: C, \dots, x_n: C \vdash t: A}}
+      {\vlhy{\overrightarrow z: \Sigma \vdash v: C}}
+    }
+  }
+&
+\rightsquigarrow
+&
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{(\terapp{u}t)}{x_1}{x_n}{v}: B}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, x_1:C, \dots, x_n: C \vdash \terapp{u}{t}: B}
+      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
+      {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
+    }
+    {\vlhy{\overrightarrow z: \Sigma \vdash v: C}}
+  }
+\\
+\\
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}}: A}
+    {\vlhy{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}}
+    {
+      \vliin{}{}
+      {\overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{v}{y_1}{y_m}{t}: B}
+      {\vlhy{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}}
+      {\vlhy{\overrightarrow z: \Sigma \vdash t: C}}
+    }
+  }
+&
+\rightsquigarrow
+&
+  % \tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}
+  \vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{(\tershare{u}{x_1}{x_n}{v})}{y_1}{y_m}{t}: A}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{u}{x_1}{x_n}{v}: A}
+      {\vlhy{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}}
+      {\vlhy{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}}
+    }
+    {\vlhy{\overrightarrow z: \Sigma \vdash t: C}}
+  }
+\\
+\\
+% TODO
+%  \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}$, if $z\not\in\FV(t)$.
+%  \item $\terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}\rightsquigarrow
+% 	\terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}$.
+% \end{itemize}
+%  \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$;
+%  \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$; and
+%  \item $\terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}\rightsquigarrow \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}$, where for every $i$ we have $\{y_{i,1},\dots,y_{i,k_i}\}\subset\FV(t_i)$.
+\end{array}
+\]
+\end{proof}
+
 \end{document}
