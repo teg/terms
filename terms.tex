@@ -228,10 +228,6 @@ The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
 	\item $\mul(\tertuple{t_1}{t_n})=n$.
 \end{itemize}
 
-\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
-
-The \emph{$i^{th}$ projection}, $\terpr{i}{\tertuple{t_1}{t_n}}$ of a tuple is defined to be $t_i$, as usual.
-
 \subsection{Lambda Terms}
 
 The set of $\lambda$-terms, $\Lambda$ is a subset of pre-terms, as expected:
@@ -273,37 +269,38 @@ In other words, a term is on explicit sharing normal form if only variables are 
 \subsection{Denotation}
 
 \newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
+\newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
 
-The function $\terden{-}:\Lambda\rightarrow\Lambda_S$ maps lambda terms to explicit sharing terms
+The function $\terden{-}:\Lambda_S\rightarrow\Lambda_S$ maps explicit sharing terms to lambda terms.
 
 \begin{itemize}
 	\item $\terden{x}=x$;
-	\item $\terden{\lambda x.u}=
-	  \begin{cases}
-	      \lambda x.\terden{u}, & \mbox{if }x\in\FV(u) \\
-	      \lambda x.\ternullshare{\terden{u}}{x}, & \mbox{otherwise}
-	  \end{cases}$; and
-	\item $\terden{(u)t}=\terbishare{\terbishare{(\terden{u'})\terden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
+	\item $\terden{\lambda x.u}=\lambda x.\terden{u}$;
+	\item $\terden{(u)t}=(\terden{u})\terden{v}$;
+	\item $\terden{\tershare{u}{x_1}{x_n}{t}}=\tersubn{\terden{u}}{x_1}{\terden{t}}{x_n}{\terden{t}}$;
+	\item $\terden{\terdist{u}{x_1}{x_n}{y}{t}}=\tersubn{\terden{u}}{x_1}{\lambda y.\terpr{1}{\terden{t}}}{x_n}{\lambda y.\terpr{n}{\terden{t}}}$; and
+	\item $\terden{\tertuple{t_1}{t_n}}=\tertuple{\terden{t_1}}{\terden{t_n}}$,
 \end{itemize}
-where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and $u'$ (resp., $t''$) is obtained from $u$ (resp., $t$) by substituting each of the $x_i$s by $x_i'$ (resp., $x_i''$).
+where the \emph{$i^{th}$ projection}, $\terpr{i}{\tertuple{t_1}{t_n}}$ of a tuple is defined to be $t_i$, as usual.
 
 \newcommand{\tercoden}[1]{{\lfloor{#1}\rfloor}}
 
-The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms
+The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms.
 
 \begin{itemize}
 	\item $\tercoden{x}=x$;
-	\item $\tercoden{\lambda x.u}=\lambda x.\tercoden{u}$;
-	\item $\tercoden{(u)t}=(\tercoden{u})\tercoden{v}$;
-	\item $\tercoden{\tershare{u}{x_1}{x_n}{t}}=\tersubn{\tercoden{u}}{x_1}{\tercoden{t}}{x_n}{\tercoden{t}}$;
-	\item $\tercoden{\terdist{u}{x_1}{x_n}{y}{t}}=\tersubn{\tercoden{u}}{x_1}{\lambda y.\terpr{1}{\tercoden{t}}}{x_n}{\lambda y.\terpr{n}{\tercoden{t}}}$; and
-	\item $\tercoden{\tertuple{t_1}{t_n}}=\tertuple{\tercoden{t_1}}{\tercoden{t_n}}$.
+	\item $\tercoden{\lambda x.u}=
+	  \begin{cases}
+	      \lambda x.\tercoden{u}, & \mbox{if }x\in\FV(u) \\
+	      \lambda x.\ternullshare{\tercoden{u}}{x}, & \mbox{otherwise}
+	  \end{cases}$; and
+	\item $\tercoden{(u)t}=\terbishare{\terbishare{(\tercoden{u'})\terden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
 \end{itemize}
+where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and $u'$ (resp., $t''$) is obtained from $u$ (resp., $t$) by substituting each of the $x_i$s by $x_i'$ (resp., $x_i''$).
 
 \begin{lemma}
  When $\tercoden{-}$ is restricted to $\Lambda_{NS}$, then $\tercoden{\terden{-}}=\terden{\tercoden{-}}=\mathsf{id}$.
 \end{lemma}
-
 
 \section{Reductions}
 
