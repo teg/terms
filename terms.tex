@@ -204,30 +204,32 @@ A proof system for minimal logic with explicit, atomic structural rules is intro
     {\lambda{#3}.{#4}}
   }
 }
-\newcommand{\tersubn}[5]{{{#1}\{{#2}\leftarrow{#3},\dots,{#4}\leftarrow{#5}\}}}
+\newcommand{\tersubn}[5]{{{#1}\{{#2}/{#3}\}\cdots\{{#4}/{#5}\}}}
+
+% TODO: check direction of slashes in substitutions
 
 Where applicable we assume that all variables are fresh, so that we do not bother with $\alpha$-conversion.
 
-\subsection{Pre Terms}
-
-\newcommand{\mul}{{\mathop{\mathsf{mul}}}}
-
-\begin{itemize}
-	\item $x$;
-	\item $\lambda x.u$;
-	\item $(u)t$;
-	\item $\tershare{u}{x_1}{x_n}{t}$;
-	\item $\terdist{u}{x_1}{x_n}{y}{t}$; and
-	\item $\tertuple{t_1}{t_n}$.
-\end{itemize}
-
-The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
-
-\begin{itemize}
-	\item $\mul(x)=\mul(\lambda x.u)=\mul((u)t)=1$
-	\item $\mul(\tershare{u}{x_1}{x_n}{t})=\mul(\terdist{u}{x_1}{x_n}{y}{t})=\mul(u)$; and
-	\item $\mul(\tertuple{t_1}{t_n})=n$.
-\end{itemize}
+% \subsection{Pre Terms}
+% 
+% \newcommand{\mul}{{\mathop{\mathsf{mul}}}}
+% 
+% \begin{itemize}
+% 	\item $x$;
+% 	\item $\lambda x.u$;
+% 	\item $(u)t$;
+% 	\item $\tershare{u}{x_1}{x_n}{t}$;
+% 	\item $\terdist{u}{x_1}{x_n}{y}{t}$; and
+% 	\item $\tertuple{t_1}{t_n}$.
+% \end{itemize}
+% 
+% The \emph{multiplicity}, $\mul(t)$, of a term $t$ is defined as follows
+% 
+% \begin{itemize}
+% 	\item $\mul(x)=\mul(\lambda x.u)=\mul((u)t)=1$
+% 	\item $\mul(\tershare{u}{x_1}{x_n}{t})=\mul(\terdist{u}{x_1}{x_n}{y}{t})=\mul(u)$; and
+% 	\item $\mul(\tertuple{t_1}{t_n})=n$.
+% \end{itemize}
 
 \subsection{Lambda Terms}
 
@@ -241,17 +243,15 @@ The set of $\lambda$-terms, $\Lambda$ is a subset of pre-terms, as expected:
 
 \subsection{Explicit Sharing Terms}
 
-The set of explicit sharing terms, $\Lambda_S$ is a subset of pre-terms restricted in the following way:
 
 \begin{itemize}
 	\item $x$;
-	\item $\lambda x.u$, where $x\in\FV(u)$ and $\mul(u)=1$;
-	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(u)=\mul(t)=1$;
-	\item $\tershare{u}{x_1}{x_n}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=1$;
-	\item $\terdist{u}{x_1}{x_n}{y}{t}$, where $\mul(t)=n$, $\{x_1,\dots,x_n\}\subset\FV(u)$, $y\in\FV(t)$, $\Var(u)\cap\Var(t)=\emptyset$ and $\mul(t)=n$; and
-	\item $\tertuple{t_1}{t_n}$, where for every $i,j$ we have $\Var(t_i)\cap\Var(t_j)=\emptyset$ and $\mul(t_i)=1$,
+	\item $\lambda x.u$, where $x\in\FV(u)$;
+	\item $(u)t$, where $\Var(u)\cap\Var(t)=\emptyset$;
 \end{itemize}
-Furthermore, we only consider terms of multiplicity one.
+\begin{itemize}
+	\item $\tershare{u}{x_1}{x_n}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $\Var(u)\cap\Var(t)=\emptyset$;
+\end{itemize}
 
 \subsection{Explicit Sharing Normal Form}
 
@@ -272,21 +272,18 @@ In other words, a term is on explicit sharing normal form if only variables are 
 \newcommand{\terden}[1]{{\llbracket{#1}\rrbracket}}
 \newcommand{\terpr}[2]{{\pi_{#1}({#2})}}
 
-The function $\terden{-}:\Lambda_S\rightarrow\Lambda_S$ maps explicit sharing terms to lambda terms.
+The function $\terden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms.
 
 \begin{itemize}
 	\item $\terden{x}=x$;
 	\item $\terden{\lambda x.u}=\lambda x.\terden{u}$;
 	\item $\terden{(u)t}=(\terden{u})\terden{v}$;
 	\item $\terden{\tershare{u}{x_1}{x_n}{t}}=\tersubn{\terden{u}}{x_1}{\terden{t}}{x_n}{\terden{t}}$;
-	\item $\terden{\terdist{u}{x_1}{x_n}{y}{t}}=\tersubn{\terden{u}}{x_1}{\lambda y.\terpr{1}{\terden{t}}}{x_n}{\lambda y.\terpr{n}{\terden{t}}}$; and
-	\item $\terden{\tertuple{t_1}{t_n}}=\tertuple{\terden{t_1}}{\terden{t_n}}$,
 \end{itemize}
-where the \emph{$i^{th}$ projection}, $\terpr{i}{\tertuple{t_1}{t_n}}$ of a tuple is defined to be $t_i$, as usual.
 
 \newcommand{\tercoden}[1]{{\lfloor{#1}\rfloor}}
 
-The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing terms to lambda terms.
+The function $\tercoden{-}:\Lambda\rightarrow\Lambda_S$ maps lambda terms to explicit sharing terms.
 
 \begin{itemize}
 	\item $\tercoden{x}=x$;
@@ -295,7 +292,7 @@ The function $\tercoden{-}:\Lambda_S\rightarrow\Lambda$ maps explicit sharing te
 	      \lambda x.\tercoden{u}, & \mbox{if }x\in\FV(u) \\
 	      \lambda x.\ternullshare{\tercoden{u}}{x}, & \mbox{otherwise}
 	  \end{cases}$; and
-	\item $\tercoden{(u)t}=\terbishare{\terbishare{(\tercoden{u'})\terden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
+	\item $\tercoden{(u)t}=\terbishare{\terbishare{(\tercoden{u'})\tercoden{t''}}{x'_1}{x''_1}{x_1}\cdots}{x'_n}{x''_n}{x_n}$,
 \end{itemize}
 where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and $u'$ (resp., $t''$) is obtained from $u$ (resp., $t$) by substituting each of the $x_i$s by $x_i'$ (resp., $x_i''$).
 
@@ -303,25 +300,78 @@ where $x_1$, $\dots$, $x_n$ are the variables in common between $u$ and $t$, and
  When $\tercoden{-}$ is restricted to $\Lambda_{NS}$, then $\tercoden{\terden{-}}=\terden{\tercoden{-}}=\mathsf{id}$.
 \end{lemma}
 
+\subsection{Atomicity}
+
+In order to obtain a set of atomic reduction rules we add the following terms to the explicit sharing calculus:
+
+\begin{itemize}
+	\item $\terdist{u}{x_1}{x_n}{y}{t}$, where $\{x_1,\dots,x_n\}\subset\FV(u)$, $y\in\FV(t)$, $\Var(u)\cap\Var(t)=\emptyset$ and where $t$ is a \emph{term of multiplicity} $n$, which is defined as follows:
+	\item a term $t$ is a term of multiplicity $n$ if
+	\begin{itemize}
+	  \item $t=\tertuple{t_1}{t_n}$, where for every $i,j$ we have $\Var(t_i)\cap\Var(t_j)=\emptyset$ and $t_i$ is a term of the explicit sharing calculus;
+	  \item $t=\tershare{u}{x_1}{x_m}{v}$, where $u$ is a term of multiplicity $n$ and $v$ is a term of the sharing calculus; or
+	  \item $t=\terdist{u}{x_1}{x_m}{y}{v}$, where $u$ is a term of multiplicity $n$ and $v$ is a term of multiplicity $m$.
+	\end{itemize}
+\end{itemize}
+
+In other words, a term of multiplicity $n$ is an $n$-tuple of terms followed by a (possibly empty) chain of substitutions and distributions, which we sometimes denote for convenience by $\tertuple{t_1}{t_n}S$.
+
+Their denotation is defined as follows:
+
+\begin{itemize}
+	\item $\terden{\terdist{u}{x_1}{x_n}{y}{\tertuple{t_1}{t_n}S}}=\tersubn{\terden{u}}{x_1}{\lambda y.\terden{t_1S}}{x_n}{\lambda y.\terden{t_nS}}$.
+\end{itemize}
+
+Note that, strictly speaking, $t_1S$ violates the linearity condition on $S$, but this is harmless.
+
 \section{Reductions}
 
 \subsection{$\beta$-reduction}
 
-We define $\beta$-reductions on pre-terms as follows:
+We define $\beta$-reductions on both explicit sharing terms and lambda terms as follows:
 
 \[(\lambda x.u)t \rightsquigarrow_\beta \tersub{u}{x}{t}\;.\]
 
-One $\beta$ reduction in the lambda calculus corresponds to one $\beta$ reduction in the explicit sharing calculus, whereas one $\beta$ reduction in the explicit sharing calculus corresponds to one or more $\beta$ reductions in the lambda calculus:
+Notice that in the case of the explicit sharing calculus, the $\beta$-reduction is a linear operation, since the bound variable $x$ occurs exactly once in the body $u$.
 
-\begin{lemma}
-For any lambda terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\tercoden{u}\rightsquigarrow_\beta\tercoden{v}$.
-\end{lemma}
+One $\beta$ reduction in the lambda calculus corresponds to one $\beta$ reduction in the explicit sharing calculus, whereas one $\beta$ reduction in the explicit sharing calculus corresponds to one or more $\beta$ reductions in the lambda calculus:
 
 \begin{lemma}
 For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\terden{u}\rightsquigarrow^\star_\beta\terden{v}$
 \end{lemma}
 
-This is as we expect, as we hope to get optimality (though will not claim that in this paper).
+This is as we expect, as an explicit sharing graph is a dag, and a lambda term is the unfolding of such a dag into a tree. So, reducing one redex in a sharing graph corresponds to reducing each of the unfolded redexes in the lambda term.
+
+% \begin{proof}
+% A $\beta$-redex in an explicit sharing term is a term on the form $v\{\terapp{\terabs{x}{u}}{t}\}$. Whose denotation is
+% \[
+% \terden{v\{\terapp{\terabs{x}{u}}{t}\}}=\tersub{\terden{v\{y\}}}{y}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}=
+% \terden{v}\{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}\}\cdots\{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}\}\;.
+% \]
+% 
+% It then follows that
+% \[
+% \terden{v}\{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}\}\cdots\{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}\}\rightsquigarrow_\beta^\star\terden{v}\{\tersub{\terden{u}}{x}{\terden{t}}\}\cdots\{\tersub{\terden{u}}{x}{\terden{t}}\}\;,
+% \]
+% which equals $\terden{v\{\tersub{u}{x}{t}\}}$ as expected.
+% \end{proof}
+
+\begin{proof}
+A $\beta$-redex in an explicit sharing term is a term on the form $\tersub{v}{y}{\terapp{\terabs{x}{u}}{t}}$. Whose denotation is
+\[
+\terden{\tersub{v}{y}{\terapp{\terabs{x}{u}}{t}}}=\tersub{\terden{v}}{y}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}=
+\tersubn{\terden{v'}}{y_1}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}{y_n}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}\;,
+\]
+Where $v'$ is obtained from $v$ by renaming of variables, such that $\terden{v}=\tersubn{\terden{v'}}{y_1}{y}{y_n}{y}$ and each $y_i$ occurrs exactly once in $\terden{v'}$. It then follows that
+\[
+\tersubn{\terden{v'}}{y_1}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}{y_n}{\terapp{\terabs{x}{\terden{u}}}{\terden{t}}}\rightsquigarrow_\beta^\star\tersubn{\terden{v'}}{y_1}{\tersub{\terden{u}}{x}{\terden{t}}}{y_n}{\tersub{\terden{u}}{x}{\terden{t}}}\;,
+\]
+which equals
+\[
+\tersub{\terden{v}}{y}{\tersub{\terden{u}}{x}{\terden{t}}}=\terden{v\{\tersub{u}{x}{t}\}}\;,
+\]
+as expected.
+\end{proof}
 
 \subsection{Sharing Reductions}
 
@@ -342,7 +392,7 @@ if $x_1$, $\dots$, $x_n$ $\not\in\FV(v)$ and $y_1$, $\dots$, $y_m$ $\not\in\FV(t
 \subsubsection{Sharing to the Root}
 
 \begin{itemize}
- \item $\lambda x.\tershare{u}{x_1}{x_n}{t}\rightsquigarrow\tershare{\lambda x.u}{x_1}{x_n}{t}$, if $x\not\in\FV(t)$;
+ \item $\lambda x.(\tershare{u}{x_1}{x_n}{t})\rightsquigarrow\tershare{(\lambda x.u)}{x_1}{x_n}{t}$, if $x\not\in\FV(t)$;
  \item \begin{itemize}
         \item $(\tershare{u}{x_1}{x_n}{v})t\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
         \item $(u)\tershare{t}{x_1}{x_n}{v}\rightsquigarrow\tershare{(u)t}{x_1}{x_n}{v}$;
@@ -363,8 +413,8 @@ We might also want to add a rule to merge sharing with distribution, but it is n
 \subsubsection{Distribute}
 
 \begin{itemize}
- \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$;
- \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$; and
+ \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$;
+ \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$; and
  \item $\terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}\rightsquigarrow \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}$, where for every $i$ we have $\{y_{i,1},\dots,y_{i,k_i}\}\subset\FV(t_i)$.
 \end{itemize}
 
@@ -376,32 +426,36 @@ For any explicit sharing terms $u$ and $v$, if $u\rightsquigarrow v$, then $\ter
 The reduction $\rightsquigarrow$ is strongly normalizing.
 \end{lemma}
 
+\begin{lemma}
+For any lambda terms $u$ and $v$, if $u\rightsquigarrow_\beta v$ then $\tercoden{u}\rightsquigarrow_\beta\tercoden{v}$.
+\end{lemma}
+
 \begin{theorem}
 PSN.
 \end{theorem}
 
 \section{Types}
 
-We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-formulae built from atoms and implications. We denote by upper-case greek letters $\Gamma$ and $\Delta$ meta-formulae built from object-formulae and conjunctions.
-
-\subsection{Inference Rules}
-
-\[
-\vlinf{}{}{A\rightarrow\vlsbr(A.\Gamma)}{\Gamma}
-\]
-
-\[
-\vlinf{}{}{B}{\vls(A.[A\rightarrow B])}
-\]
-
-\[
-\vlinf{}{}{\vls(A.\cdots.A)}{A}
-\]
-
-\[
-\vlinf{}{}{\vls([A\rightarrow B_1].\cdots.[A\rightarrow B_n])}{A\rightarrow\vlsbr(B_1.\cdots.B_n)}
-\]
-
+% We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-formulae built from atoms and implications. We denote by upper-case greek letters $\Gamma$ and $\Delta$ meta-formulae built from object-formulae and conjunctions.
+% 
+% \subsection{Inference Rules}
+% 
+% \[
+% \vlinf{}{}{A\rightarrow\vlsbr(A.\Gamma)}{\Gamma}
+% \]
+% 
+% \[
+% \vlinf{}{}{B}{\vls(A.[A\rightarrow B])}
+% \]
+% 
+% \[
+% \vlinf{}{}{\vls(A.\cdots.A)}{A}
+% \]
+% 
+% \[
+% \vlinf{}{}{\vls([A\rightarrow B_1].\cdots.[A\rightarrow B_n])}{A\rightarrow\vlsbr(B_1.\cdots.B_n)}
+% \]
+% 
 \subsection{Typing Derivations}
 \[
 \typevar{x}{A}
@@ -424,7 +478,18 @@ We denote by upper-case latin letters $A$, $B$, $C$, $X$, $Y$, and $Z$ object-fo
 \]
 
 \begin{theorem}
-Every reduction preserves typing.
+The term equations preserve typing.
+\end{theorem}
+
+\begin{proof}
+\[
+\begin{array}{c@{\quad}c@{\quad}c}
+\end{array}
+\]
+\end{proof}
+
+\begin{theorem}
+$\beta$-reduction preserves typing.
 \end{theorem}
 
 \begin{proof}
