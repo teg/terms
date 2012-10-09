@@ -9,7 +9,7 @@
 \usepackage{microtype}
 
 % To typeset derivations
-\usepackage[lutzsyntax,noxy]{virginialake}
+\usepackage[lutzsyntax,pdftex]{virginialake}
 
 % Allow inclusion of graphics
 \usepackage[pdftex]{graphicx}
@@ -436,22 +436,34 @@ Every reduction preserves typing.
     {
       \vlin{}{}
       {\overrightarrow x: \Gamma \vdash \terabs{x}{u}:A\vlim B}
-      {\vlhy{\overrightarrow x: \Gamma, x: A \vdash u: B}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x: A \vdash u: B}{\vlhy{\cdots}}{\vlin{}{}{x:A\vdash x:A}{}}{\vlhy{\cdots}}}
     }
-    {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
+    {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
 &
 \rightsquigarrow_\beta
 &
   \vlderivation
   {
-    \vliin{}{}
-    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tersub{u}{x}{t}: B}
-    {\vlhy{\overrightarrow x: \Gamma, x: A \vdash u: B}}
-    {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
-  }
+    \vltr{\pi'_1}{\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tersub{u}{x}{t}: B}
+      {\vlhy{\cdots}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vlhy{\cdots}}
+  }\;,
 \\
 \\
+\end{array}
+\]
+where $\pi'_1$ is obtained from $\pi_1$ by substituting $x$ on the left of the turnstile with $\overrightarrow y$ and $x$ on the right of the turnstile with $t$.
+\end{proof}
+
+\begin{theorem}
+Every sharing reduction preserves typing.
+\end{theorem}
+
+\begin{proof}
+\[
+% \begin{array}{c@{\quad}c@{\quad}c}
   \vlderivation
   {
     \vlin{}{}
@@ -459,100 +471,107 @@ Every reduction preserves typing.
     {
       \vliin{}{}
       {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, x: A \vdash \tershare{u}{x_1}{x_n}{t}: B}
-      {\vlhy{\overrightarrow x: \Gamma, x: A, x_1: C, \dots, x_n: C \vdash u: B}}
-      {\vlhy{\overrightarrow y: \Delta \vdash t: C}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x: A, x_1: C, \dots, x_n: C \vdash u: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
   }
-&
-\rightsquigarrow
-&
-  \vlderivation
+% &
+% \rightsquigarrow
+% &
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{(\terabs{x}{u})}{x_1}{x_n}{t}: A\vlim B}
     {
       \vlin{}{}
       {\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash \terabs{x}{u}: A\vlim B}
-      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C, x: A \vdash u: B}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C, x: A \vdash u: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
-    {\vlhy{\overrightarrow y: \Delta \vdash t: C}}
+    {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
-\\
-\\
-  \vlderivation
+% \\
+% \\
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \terapp{\tershare{u}{x_1}{x_n}{v}}t: B}
     {
       \vliin{}{}
       {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{u}{x_1}{x_n}{v}: A\vlim B}
-      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
-      {\vlhy{\overrightarrow y: \Delta \vdash v: C}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash v: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
-    {\vlhy{\overrightarrow z: \Sigma \vdash t: A}}
+    {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
-&
-\rightsquigarrow
-&
-  \vlderivation
+% &
+% \rightsquigarrow
+% &
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{(\terapp{u}t)}{x_1}{x_n}{v}: B}
     {
       \vliin{}{}
       {\overrightarrow x: \Gamma, \overrightarrow z: \Sigma, x_1:C, \dots, x_n: C \vdash \terapp{u}{t}: B}
-      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
-      {\vlhy{\overrightarrow z: \Sigma \vdash t: A}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
-    {\vlhy{\overrightarrow y: \Delta \vdash v: C}}
+    {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash v: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
-\\
-\\
-  \vlderivation
+% \\
+% \\
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \terapp{u}{\tershare{t}{x_1}{x_n}{v}}: B}
-    {\vlhy{\overrightarrow x: \Gamma \vdash u: A\vlim B}}
+    {\vltr{\pi_1}{\overrightarrow x: \Gamma \vdash u: A\vlim B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     {
       \vliin{}{}
       {\overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{t}{x_1}{x_n}{v}: A}
-      {\vlhy{\overrightarrow y: \Delta, x_1: C, \dots, x_n: C \vdash t: A}}
-      {\vlhy{\overrightarrow z: \Sigma \vdash v: C}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta, x_1: C, \dots, x_n: C \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash v: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
   }
-&
-\rightsquigarrow
-&
-  \vlderivation
+% &
+% \rightsquigarrow
+% &
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{(\terapp{u}t)}{x_1}{x_n}{v}: B}
     {
       \vliin{}{}
       {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, x_1:C, \dots, x_n: C \vdash \terapp{u}{t}: B}
-      {\vlhy{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}}
-      {\vlhy{\overrightarrow y: \Delta \vdash t: A}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A\vlim B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
-    {\vlhy{\overrightarrow z: \Sigma \vdash v: C}}
+    {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash v: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
-\\
-\\
-  \vlderivation
+% \\
+% \\
+\]
+\[\vlderivation
   {
     \vliin{}{}
     {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{u}{x_1}{x_n}{\tershare{v}{y_1}{y_m}{t}}: A}
-    {\vlhy{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}}
+    {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     {
       \vliin{}{}
       {\overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{v}{y_1}{y_m}{t}: B}
-      {\vlhy{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}}
-      {\vlhy{\overrightarrow z: \Sigma \vdash t: C}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
   }
-&
-\rightsquigarrow
-&
-  % \tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}
+% &
+% \rightsquigarrow
+% &
+\]
+\[% \tershare{\tershare{u}{x_1}{x_n}{v}}{y_1}{y_m}{t}
   \vlderivation
   {
     \vliin{}{}
@@ -560,23 +579,311 @@ Every reduction preserves typing.
     {
       \vliin{}{}
       {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{u}{x_1}{x_n}{v}: A}
-      {\vlhy{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}}
-      {\vlhy{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B, \dots, x_n: B \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta, y_1: C, \dots, y_m: C \vdash v: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
     }
-    {\vlhy{\overrightarrow z: \Sigma \vdash t: C}}
+    {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
   }
-\\
-\\
-% TODO
-%  \item $\terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{t}}\rightsquigarrow\tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}$, if $z\not\in\FV(t)$.
-%  \item $\terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}\rightsquigarrow
-% 	\terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}$.
-% \end{itemize}
-%  \item $\tershare{u}{x_1}{x_n}{\lambda x.t} \rightsquigarrow \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}$;
-%  \item $\tershare{u}{x_1}{x_n}{(v)t} \rightsquigarrow \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}$; and
-%  \item $\terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}\rightsquigarrow \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}$, where for every $i$ we have $\{y_{i,1},\dots,y_{i,k_i}\}\subset\FV(t_i)$.
-\end{array}
+% \end{array}
 \]
+\[
+% \begin{array}{c@{\quad}c@{\quad}c}
+% \\
+% \\
+  \vlderivation
+  {
+    \vliin{}{}
+    {
+      \overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \terdist{u}{x_1}{x_n}{z}{\tershare{v}{y_1}{y_m}{t}}: A
+    }
+    {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B\vlim C_1, \dots, x_n: B\vlim C_n \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+    {
+      \vliin{}{}
+      {\overrightarrow y: \Delta, \overrightarrow z: \Sigma, z: B \vdash \tershare{v}{y_1}{y_m}{t}: \vls(C_1.\dots.C_n)}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta, y_1: D, \dots, y_m: D, z: B \vdash v: \vls(C_1.\dots.C_n)}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: D}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+    }
+  }
+% &
+% \rightsquigarrow
+% &
+% \tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}$, if $z\not\in\FV(t)
+\]
+\[\vlderivation
+  {
+    \vliin{}{}
+    {\overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{\terdist{u}{x_1}{x_n}{z}{v}}{y_1}{y_m}{t}: A}
+    {
+      \vliin{}{}
+      {\overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terdist{u}{x_1}{x_n}{z}{v}: A}
+      {\vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B\vlim C_1, \dots, x_n: B\vlim C_n \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+      {\vltr{\pi_2}{\overrightarrow y: \Delta, y_1: D, \dots, y_m: D, z: B \vdash v: \vls(C_1.\dots.C_n)}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+    }
+    {\vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: D}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}}
+  }
+% \\
+% \\
+% \terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}
+\]
+\[\vlderivation
+  {
+    \vliin{}{}
+    {
+      \overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terauxshare{\tershare{u}{x_1}{x_n}{y_i}}{y_1,\dots,y_i,\dots,y_m}{t}: A
+    }
+    {
+      \vliin{}{}
+      {
+	\overrightarrow x: \Gamma, y_1: B, \dots, y_{i-1}:B,\dots, y_{i+1}:B, \dots, y_m: B\vdash \tershare{u}{x_1}{x_n}{y_i}: A
+      }
+      {
+	\vltr{\pi_1}{\overrightarrow x: \Gamma, y_1: B, \dots, y_{i-1}:B,\dots, y_{i+1}:B, \dots, y_m: B, x_1:B,\dots,x_n:B \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+      }
+      {
+	\vlin{}{}
+	{
+	  y_i:B \vdash y_i: B
+	}
+	{\vlhy{}}
+      }
+    }
+    {
+      \vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+\]
+\[
+% \terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terauxshare{u}{y_1,\dots,y_{i-1},x_1,\dots,x_n,y_{i+1},\dots,y_m}{t}: A
+  }
+  {
+    \vltr{\pi_1}{\overrightarrow x: \Gamma, y_1: B, \dots, y_{i-1}:B,\dots, y_{i+1}:B, \dots, y_m: B, x_1:B,\dots,x_n:B \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+  {
+    \vltr{\pi_2}{\overrightarrow y: \Delta \vdash t: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+}
+\]
+\[
+% \tershare{u}{x_1}{x_n}{\lambda x.t}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \tershare{u}{x_1}{x_n}{\lambda x.t}: A
+  }
+  {
+    \vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B\vlim C, \dots, x_n: B\vlim C \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+  {
+    \vlin{}{}
+    {
+      \overrightarrow y: \Delta \vdash \terabs{x}{t}: B \vlim C
+    }
+    {
+      \vltr{\pi_2}{\overrightarrow y: \Delta, x: B \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+}
+\]
+\[
+% \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y: \Delta \vdash \terdist{u}{x_1}{x_n}{x}{\tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}}: A
+  }
+  {
+    \vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B\vlim C, \dots, x_n: B\vlim C \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+  {
+    \vliin{}{}
+    {
+      \overrightarrow y: \Delta \vdash \tershare{\tertuple{y_1}{y_n}}{y_1}{y_n}{t}: \vls(C.\cdots.C)
+    }
+    {
+      \vliiin{}{}
+      {
+	y_1: C, \dots, y_1: C \vdash \tertuple{y_1}{y_n}: \vls(C.\cdots.C)
+      }
+      {
+	\vlin{}{}
+	{y_1: C \vdash y_1: C}
+	{\vlhy{}}
+      }
+      {\vlhy{\cdots}}
+      {
+	\vlin{}{}
+	{y_n: C \vdash y_n: C}
+	{\vlhy{}}
+      }
+    }
+    {
+      \vltr{\pi_2}{\overrightarrow y: \Delta, x: B \vdash t: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+}
+\]
+\[
+% \tershare{u}{x_1}{x_n}{(v)t}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{u}{x_1}{x_n}{(v)t}: A
+  }
+  {
+    \vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: C, \dots, x_n: C \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+  {
+    \vliin{}{}
+    {
+      \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash (v)t: C
+    }
+    {
+      \vltr{\pi_2}{\overrightarrow y: \Delta \vdash v: B\vlim C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+    {
+      \vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+}
+\]
+\[
+% \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y: \Delta, \overrightarrow z: \Sigma \vdash \tershare{\tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}}{z_1}{z_n}{t}: A
+  }
+  {
+    \vliin{}{}
+    {
+      \overrightarrow x: \Gamma, \overrightarrow y: \Delta, z_1: B, \dots, z_n: B \vdash \tershare{\tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}{y_1}{y_n}{v}
+    }
+    {
+      \vltr{\pi'_1}{\overrightarrow x: \Gamma, z_1: B, \dots, z_n: B, y_1: B\vlim C, \dots, y_n: B\vlim C \vdash \tersubn{u}{x_1}{(y_1)z_1}{x_n}{(y_n)z_n}}
+      {
+	\vliin{}{}
+	{
+	  z_1:B, y_1: B\vlim C \vdash (y_1)z_1: C
+	}
+	{
+	  \vlin{}{}
+	  {y_1: B\vlim C \vdash y_1: B\vlim C}
+	  {\vlhy{}}
+	}
+	{
+	  \vlin{}{}
+	  {z_1: B \vdash z_1:B}
+	  {\vlhy{}}
+	}
+      }
+      {
+	\vlhy{\cdots}
+      }
+      {
+	\vliin{}{}
+	{
+	  z_n:B, y_n: B\vlim C \vdash (y_n)z_n: C
+	}
+	{
+	  \vlin{}{}
+	  {y_n: B\vlim C \vdash y_n: B\vlim C}
+	  {\vlhy{}}
+	}
+	{
+	  \vlin{}{}
+	  {z_n: B \vdash z_n:B}
+	  {\vlhy{}}
+	}
+      }
+    }
+    {
+      \vltr{\pi_2}{\overrightarrow y: \Delta \vdash v: B\vlim C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+  {
+    \vltr{\pi_3}{\overrightarrow z: \Sigma \vdash t: B}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+}\;,
+\]
+where $\pi'_1$ is obtained from $\pi_1$ by replacing $x_i: C$ with $z_i:B, y_i: B\vlim C$ on the left of the turnstile and with $(y_i)z_i$ on the right of the turnstile.
+\[
+% \terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}
+\vlderivation
+{
+  \vliin{}{}
+  {
+    \overrightarrow x: \Gamma, \overrightarrow y_1: \Delta_1, \dots, \overrightarrow y_n: \Delta_n \vdash \terdist{u}{x_1}{x_n}{y}{\terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}}: A
+  }
+  {
+    \vltr{\pi_1}{\overrightarrow x: \Gamma, x_1: B\vlim C, \dots, x_n: B\vlim C \vdash u: A}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+  }
+  {
+    \vliin{}{}
+    {
+      \overrightarrow y_1: \Delta_1, \dots, \overrightarrow y_n: \Delta_n \vdash \terauxshare{\tertuple{t_1}{t_n}}{y_{1,1},\dots,y_{1,k_1},\dots,y_{n,1},\dots,y_{n,k_n}}{y}: \vls(C.\cdots.C)
+    }
+    {
+      \vliiin{}{}
+      {
+	\overrightarrow y_1: \Delta_1, \dots, \overrightarrow y_n: \Delta_n, y_{1,1}: B,\dots,y_{1,k_1}:B,\dots,y_{n,1}:B,\dots,y_{n,k_n}:B \vdash \tertuple{t_1}{t_n}: \vls(C.\cdots.C)
+      }
+      {
+	\vltr{\pi_2^1}{\overrightarrow y_1: \Delta_1, y_{1,1}: B,\dots,y_{1,k_1}:B \vdash t_1: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+      }
+      {
+	\vlhy{\cdots}
+      }
+      {
+	\vltr{\pi_2^n}{\overrightarrow y_n: \Delta_n, y_{n,1}:B,\dots,y_{n,k_n}:B \vdash t_n: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+      }
+    }
+    {
+      \vlin{}{}
+      {
+	y: B \vdash y: B
+      }
+      {\vlhy{}}
+    }
+  }
+}
+\]
+\[
+%\tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}
+\vlderivation
+{
+  \vltr{\pi'_1}{\overrightarrow x: \Gamma, \overrightarrow y_1: \Delta_1, \dots, \overrightarrow y_n: \Delta_n \vdash \tersubn{u}{x_1}{\lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}}{x_n}{\lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}}:A}
+  {
+    \vlin{}{}
+    {
+      \overrightarrow y_1:\Delta_1\vdash \lambda y_1.\tershare{t_1}{y_{1,1}}{y_{1,k_1}}{y_1}: B\vlim C
+    }
+    {
+      \vltr{\pi_2^1}{\overrightarrow y_1: \Delta_1, y_{1,1}: B,\dots,y_{1,k_1}:B \vdash t_1: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+  {\vlhy{\cdots}}
+  {
+    \vlin{}{}
+    {
+      \overrightarrow y_n:\Delta_n\vdash \lambda y_n.\tershare{t_n}{y_{n,1}}{y_{n,k_n}}{y_n}: B\vlim C
+    }
+    {
+      \vltr{\pi_2^n}{\overrightarrow y_n: \Delta_n, y_{n,1}: B,\dots,y_{n,k_n}:B \vdash t_n: C}{\vlhy{\ }}{\vlhy{\ }}{\vlhy{\ }}
+    }
+  }
+}\;,
+% \end{array}
+\]
+where $\pi'_1$ is obtained from $\pi_1$ by replacing $x_i: B\vlim C$ with $\overrightarrow y_i: \Delta_i$ on the left of the turnstile and with $\terabs{y_i}{\tershare{t_i}{y_{i,1}}{y_{i,k_i}}{y_i}}$ on the right of the turnstile.
 \end{proof}
 
 \end{document}
